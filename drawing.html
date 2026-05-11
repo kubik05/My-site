@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рисовалка</title>
+    <style>
+        body { margin:0; overflow:hidden; background:#1a1a2e; }
+        canvas { display:block; background:white; }
+        .tools {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 10px 20px;
+            border-radius: 30px;
+            z-index: 10;
+        }
+        input, button {
+            border-radius: 20px;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+        .back-link {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            color: white;
+            text-decoration: none;
+            background: rgba(0,0,0,0.7);
+            padding: 8px 15px;
+            border-radius: 20px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← На главную</a>
+    <canvas id="canvas"></canvas>
+    <div class="tools">
+        <input type="color" id="color" value="#000000">
+        <input type="range" id="size" min="1" max="20" value="3">
+        <button onclick="clearCanvas()">Очистить</button>
+    </div>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let painting = false;
+        canvas.addEventListener('touchstart', e => {
+            painting = true;
+            ctx.beginPath();
+            const touch = e.touches[0];
+            ctx.moveTo(touch.clientX, touch.clientY);
+        });
+        canvas.addEventListener('touchmove', e => {
+            if (!painting) return;
+            const touch = e.touches[0];
+            ctx.lineTo(touch.clientX, touch.clientY);
+            ctx.strokeStyle = document.getElementById('color').value;
+            ctx.lineWidth = document.getElementById('size').value;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        });
+        canvas.addEventListener('touchend', () => painting = false);
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+</body>
+</html>
