@@ -3,98 +3,133 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My App OS</title>
+<title>Neon OS 2.1</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #0f0f0f;
-  color: white;
-  overflow: hidden;
+body{
+  margin:0;
+  font-family:Arial;
+  background: radial-gradient(circle at top, #0b0b18, #05050a);
+  color:white;
+  overflow:hidden;
 }
 
-/* LAYOUT */
-.app {
-  display: flex;
-  height: 100vh;
+/* ===== APP LAYOUT ===== */
+.app{
+  display:flex;
+  height:100vh;
 }
 
-/* SIDEBAR (ANDROID) */
-.sidebar {
-  width: 70px;
-  background: #181818;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 10px;
+/* ===== SIDEBAR ===== */
+.sidebar{
+  width:70px;
+  background:rgba(255,255,255,0.04);
+  backdrop-filter:blur(18px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding-top:10px;
+  border-right:1px solid rgba(255,255,255,0.08);
 }
 
-.sidebar button {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 20px;
-  padding: 14px;
-  cursor: pointer;
+.sidebar button{
+  background:none;
+  border:none;
+  color:white;
+  font-size:20px;
+  padding:14px;
+  cursor:pointer;
+  transition:0.2s;
 }
 
-.sidebar button:hover {
-  background: #333;
-  border-radius: 12px;
+.sidebar button:hover{
+  transform:scale(1.2);
+  color:#7c5cff;
 }
 
-/* CONTENT */
-.content {
-  flex: 1;
-  position: relative;
+/* ===== CONTENT ===== */
+.content{
+  flex:1;
+  position:relative;
+  overflow:hidden;
 }
 
-/* SCREENS */
-.screen {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  padding: 20px;
-  opacity: 0;
-  transform: translateX(30px);
-  transition: 0.25s ease;
-  pointer-events: none;
+/* ===== SCREENS ===== */
+.screen{
+  position:absolute;
+  width:100%;
+  height:100%;
+  padding:20px;
+  opacity:0;
+  transform:translateX(30px);
+  transition:0.25s ease;
+  pointer-events:none;
 }
 
-.screen.active {
-  opacity: 1;
-  transform: translateX(0);
-  pointer-events: auto;
+.screen.active{
+  opacity:1;
+  transform:translateX(0);
+  pointer-events:auto;
 }
 
-/* BOTTOM DOCK (iOS STYLE) */
-.dock {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  padding: 10px;
-  background: #111;
-  border-top: 1px solid #222;
+/* ===== GLASS CARD ===== */
+.card{
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(12px);
+  padding:15px;
+  border-radius:16px;
+  margin-top:10px;
+  border:1px solid rgba(255,255,255,0.08);
 }
 
-.dock button {
-  background: #222;
-  border: none;
-  color: white;
-  padding: 10px;
-  border-radius: 10px;
+/* ===== INPUT ===== */
+input{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  color:white;
+  border-radius:10px;
 }
 
-/* CARD */
-.card {
-  background: #1f1f1f;
-  padding: 15px;
-  border-radius: 12px;
-  margin-top: 10px;
+/* ===== BUTTON ===== */
+button{
+  margin-top:10px;
+  padding:10px;
+  background:linear-gradient(135deg,#7c5cff,#4fd1c5);
+  border:none;
+  color:white;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+/* ===== DOCK (iOS STYLE) ===== */
+.dock{
+  position:absolute;
+  bottom:10px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:12px;
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(15px);
+  padding:10px 14px;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,0.1);
+}
+
+.dock button{
+  background:none;
+  font-size:18px;
+  padding:8px;
+}
+
+/* ===== SWIPE AREA ===== */
+.swipe-zone{
+  position:absolute;
+  width:100%;
+  height:100%;
 }
 </style>
 </head>
@@ -111,41 +146,44 @@ body {
     <button onclick="show('profile')">👤</button>
   </div>
 
-  <!-- CONTENT -->
   <div class="content">
 
+    <!-- SWIPE LAYER -->
+    <div class="swipe-zone" id="swipe"></div>
+
+    <!-- HOME -->
     <div id="home" class="screen active">
-      <h1>Home</h1>
-      <div class="card">Welcome to App OS</div>
+      <h1>Neon OS</h1>
+      <div class="card">Welcome</div>
     </div>
 
+    <!-- APPS -->
     <div id="apps" class="screen">
       <h1>Apps</h1>
-
       <div class="card">
-        <button onclick="show('weatherApp')">Weather</button>
-        <button onclick="show('notesApp')">Notes</button>
-        <button onclick="show('games')">Games</button>
+        <button onclick="show('weather')">🌦 Weather</button>
+        <button onclick="show('notes')">📝 Notes</button>
+        <button onclick="show('games')">🎮 Games</button>
       </div>
     </div>
 
-    <div id="weatherApp" class="screen">
+    <!-- WEATHER -->
+    <div id="weather" class="screen">
       <h1>Weather</h1>
-      <div class="card" id="weather">Loading...</div>
+      <div class="card" id="weatherBox">Loading...</div>
     </div>
 
-    <div id="notesApp" class="screen">
+    <!-- NOTES -->
+    <div id="notes" class="screen">
       <h1>Notes</h1>
-
       <input id="noteInput" placeholder="New note">
       <button onclick="addNote()">Add</button>
-
-      <div id="notes"></div>
+      <div id="notesBox"></div>
     </div>
 
+    <!-- CHAT -->
     <div id="chat" class="screen">
       <h1>Chat</h1>
-
       <div class="card">
         <div id="chatBox"></div>
         <input id="msg" placeholder="Message">
@@ -153,14 +191,18 @@ body {
       </div>
     </div>
 
-    <div id="games" class="screen">
-      <h1>Games</h1>
-      <div class="card">Mini games coming</div>
-    </div>
-
+    <!-- PROFILE -->
     <div id="profile" class="screen">
       <h1>Profile</h1>
-      <div class="card">User profile</div>
+      <div class="card">User</div>
+    </div>
+
+    <!-- DOCK -->
+    <div class="dock">
+      <button onclick="show('home')">🏠</button>
+      <button onclick="show('apps')">📦</button>
+      <button onclick="show('chat')">💬</button>
+      <button onclick="show('weather')">🌦</button>
     </div>
 
   </div>
@@ -168,64 +210,80 @@ body {
 
 <script>
 
-/* ROUTER */
-function show(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+/* ===== ROUTER ===== */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  location.hash = id;
+  location.hash=id;
 }
 
 /* INIT */
-window.addEventListener('load', () => {
-  const page = location.hash.replace('#','') || 'home';
+window.addEventListener('load',()=>{
+  const page=location.hash.replace('#','')||'home';
   show(page);
   loadWeather();
   loadNotes();
+  loadChat();
 });
 
-/* WEATHER API */
-async function loadWeather() {
-  const el = document.getElementById("weather");
-  const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=50.11&longitude=8.68&current_weather=true");
-  const data = await res.json();
-  el.innerText = `Temp: ${data.current_weather.temperature}°C`;
+/* ===== SWIPE (BASIC GESTURE SYSTEM) ===== */
+let startX=0;
+
+document.getElementById("swipe").addEventListener("touchstart",e=>{
+  startX=e.touches[0].clientX;
+});
+
+document.getElementById("swipe").addEventListener("touchend",e=>{
+  let endX=e.changedTouches[0].clientX;
+
+  if(startX-endX>50){
+    show('apps'); // swipe left
+  }
+  if(endX-startX>50){
+    show('home'); // swipe right
+  }
+});
+
+/* ===== WEATHER ===== */
+async function loadWeather(){
+  const el=document.getElementById("weatherBox");
+  const res=await fetch("https://api.open-meteo.com/v1/forecast?latitude=50.11&longitude=8.68&current_weather=true");
+  const data=await res.json();
+  el.innerHTML=`Temp: ${data.current_weather.temperature}°C`;
 }
 
-/* CHAT */
-function send() {
-  const msg = document.getElementById("msg");
-  const box = document.getElementById("chatBox");
-
-  const messages = JSON.parse(localStorage.getItem("chat") || "[]");
-  messages.push(msg.value);
-  localStorage.setItem("chat", JSON.stringify(messages));
-
-  msg.value = "";
+/* ===== CHAT ===== */
+function send(){
+  let msg=document.getElementById("msg");
+  let chat=JSON.parse(localStorage.getItem("chat")||"[]");
+  chat.push(msg.value);
+  localStorage.setItem("chat",JSON.stringify(chat));
+  msg.value="";
   loadChat();
 }
 
-function loadChat() {
-  const box = document.getElementById("chatBox");
-  const messages = JSON.parse(localStorage.getItem("chat") || "[]");
-  box.innerHTML = messages.map(m => `<div>💬 ${m}</div>`).join("");
+function loadChat(){
+  let box=document.getElementById("chatBox");
+  let chat=JSON.parse(localStorage.getItem("chat")||"[]");
+  box.innerHTML=chat.map(m=>`💬 ${m}`).join("<br>");
 }
-loadChat();
 
-/* NOTES */
-function addNote() {
-  const input = document.getElementById("noteInput");
-  const notes = JSON.parse(localStorage.getItem("notes") || "[]");
+/* ===== NOTES ===== */
+function addNote(){
+  let input=document.getElementById("noteInput");
+  let notes=JSON.parse(localStorage.getItem("notes")||"[]");
   notes.push(input.value);
-  localStorage.setItem("notes", JSON.stringify(notes));
-  input.value = "";
+  localStorage.setItem("notes",JSON.stringify(notes));
+  input.value="";
   loadNotes();
 }
 
-function loadNotes() {
-  const box = document.getElementById("notes");
-  const notes = JSON.parse(localStorage.getItem("notes") || "[]");
-  box.innerHTML = notes.map(n => `<div class="card">📝 ${n}</div>`).join("");
+function loadNotes(){
+  let box=document.getElementById("notesBox");
+  let notes=JSON.parse(localStorage.getItem("notes")||"[]");
+  box.innerHTML=notes.map(n=>`📝 ${n}`).join("<br>");
 }
+
 </script>
 
 </body>
