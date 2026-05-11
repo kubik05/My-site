@@ -3,72 +3,100 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kubik App</title>
 
-<title>Kubik Site</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0f172a;
+    color: white;
+}
 
-<link rel="stylesheet" href="style.css">
+/* HEADER */
+header {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    background: #111827;
+}
+
+nav button {
+    background: none;
+    border: none;
+    color: white;
+    margin: 0 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* SCREENS */
+.screen {
+    display: none;
+    padding: 20px;
+}
+
+.active {
+    display: block;
+}
+
+/* CARD */
+.card {
+    background: #1f2937;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 10px 0;
+}
+</style>
 </head>
 
 <body>
 
-<div class="background"></div>
-
 <header>
-
-<h1>🔥 KUBIK PORTAL 🔥</h1>
+<h2>🔥 KUBIK APP</h2>
 
 <nav>
-<a href="pages/games.html">🎮 Игры</a>
-<a href="pages/tools.html">🛠 Инструменты</a>
-<a href="pages/profile.html">👤 Профиль</a>
-<a href="pages/news.html">📰 Новости</a>
+<button onclick="show('home')">🏠</button>
+<button onclick="show('games')">🎮</button>
+<button onclick="show('tools')">🛠</button>
+<button onclick="show('ai')">🤖</button>
 </nav>
-
 </header>
 
-<section class="hero">
-
-<h2>Добро пожаловать</h2>
-
-<p>
-Мой портал с играми, AI, инструментами и крутыми проектами 🚀
-</p>
-
-<button onclick="toggleTheme()">
-🌙 Сменить тему
-</button>
-
-</section>
-
-<section class="cards">
-
-<div class="card">
-<h3>🎮 Игры</h3>
-<p>Ферма, змейка, кликеры и многое другое</p>
+<!-- HOME -->
+<div id="home" class="screen active">
+<h2>Главная</h2>
+<div class="card">Добро пожаловать в приложение 🚀</div>
 </div>
 
-<div class="card">
-<h3>🤖 AI</h3>
-<p>Умный AI чат прямо на сайте</p>
+<!-- GAMES -->
+<div id="games" class="screen">
+<h2>Игры</h2>
+<div class="card">🎮 Ферма</div>
+<div class="card">🐍 Змейка</div>
+<div class="card">🧠 Кликер</div>
 </div>
 
-<div class="card">
-<h3>🛠 Инструменты</h3>
-<p>Заметки, погода, пароли, рисовалка</p>
+<!-- TOOLS -->
+<div id="tools" class="screen">
+<h2>Инструменты</h2>
+<div class="card">🌤 Погода</div>
+<div class="card">📝 Заметки</div>
+<div class="card">🔐 Генератор паролей</div>
 </div>
 
-<div class="card">
-<h3>🏆 Система уровней</h3>
-<p>Получай опыт и достижения</p>
+<!-- AI -->
+<div id="ai" class="screen">
+<h2>AI Чат</h2>
+<div class="card">🤖 Тут будет твой AI чат</div>
 </div>
 
-</section>
-
-<footer>
-© 2026 Kubik Portal
-</footer>
-
-<script src="script.js"></script>
+<script>
+function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+</script>
 
 </body>
 </html>
