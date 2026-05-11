@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Android Mini OS</title>
+<title>Мой телефон</title>
 
 <style>
-/* ===== ОСНОВА ===== */
 body{
   margin:0;
   font-family:Arial;
@@ -15,285 +14,247 @@ body{
   overflow:hidden;
 }
 
-/* ===== СИСТЕМА ===== */
-.app{
-  display:flex;
-  height:100vh;
-}
-
-/* ===== SIDEBAR ===== */
-.sidebar{
-  width:70px;
-  background:rgba(255,255,255,0.04);
-  backdrop-filter:blur(18px);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding-top:10px;
-}
-
-.sidebar button{
-  background:none;
-  border:none;
-  color:white;
-  font-size:20px;
-  padding:14px;
-  cursor:pointer;
-}
-
-.sidebar button:hover{
-  transform:scale(1.2);
-  color:#6c7bff;
-}
-
-/* ===== AREA ===== */
-.content{
-  flex:1;
-  position:relative;
-}
-
-/* ===== WINDOW ===== */
-.window{
-  position:absolute;
-  width:320px;
-  height:260px;
-  background:rgba(255,255,255,0.06);
-  backdrop-filter:blur(18px);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:18px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.6);
-
-  transform:scale(0.2);
-  opacity:0;
-  transition: transform 280ms cubic-bezier(0.2,0.9,0.2,1), opacity 200ms;
-}
-
-.window.open{
-  transform:scale(1);
-  opacity:1;
-}
-
-/* ===== TITLE BAR ===== */
-.titlebar{
-  background:rgba(0,0,0,0.4);
-  padding:8px;
-  display:flex;
-  justify-content:space-between;
-  cursor:grab;
-  border-radius:18px 18px 0 0;
-}
-
-/* ===== CONTENT ===== */
-.win-content{
-  padding:10px;
-}
-
-/* ===== CLOSE ===== */
-.close{
-  cursor:pointer;
-  color:#ff4d4d;
-}
-
-/* ===== INPUT ===== */
-input{
-  width:100%;
-  margin-top:8px;
-  padding:8px;
-  background:#111;
-  border:1px solid #333;
-  color:white;
-  border-radius:8px;
-}
-
-/* ===== BUTTON ===== */
-button{
-  margin-top:8px;
-  padding:8px;
-  background:linear-gradient(135deg,#5c6cff,#4fd1c5);
-  border:none;
-  color:white;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-/* ===== NOTIFICATION ===== */
-#notif{
+/* ===== УВЕДОМЛЕНИЕ ===== */
+#уведомление{
   position:absolute;
   top:20px;
   right:20px;
-  padding:10px;
   background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(15px);
-  border:1px solid rgba(255,255,255,0.1);
+  padding:10px;
   border-radius:12px;
   display:none;
+  backdrop-filter:blur(10px);
+}
+
+/* ===== ГЛАВНЫЙ ЭКРАН ===== */
+.экран{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  padding:20px;
+  height:100vh;
+  align-content:start;
+}
+
+/* ===== ИКОНКИ ===== */
+.иконка{
+  background:rgba(255,255,255,0.06);
+  border-radius:18px;
+  height:90px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+}
+
+.иконка:hover{
+  transform:scale(1.05);
+}
+
+/* ===== ПРИЛОЖЕНИЕ (ПОЛНЫЙ ЭКРАН) ===== */
+.app{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(10,10,20,0.98);
+  display:none;
+  flex-direction:column;
+  z-index:999;
+  padding:15px;
+}
+
+/* ===== КНОПКА НАЗАД ===== */
+.back{
+  padding:10px;
+  margin-bottom:10px;
+  background:linear-gradient(135deg,#5c6cff,#4fd1c5);
+  border:none;
+  border-radius:10px;
+  color:white;
+}
+
+/* ===== ПОЛЯ ===== */
+input{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  background:#111;
+  border:1px solid #333;
+  border-radius:8px;
+  color:white;
+}
+
+button{
+  margin-top:10px;
+  padding:10px;
+  background:linear-gradient(135deg,#5c6cff,#4fd1c5);
+  border:none;
+  border-radius:10px;
+  color:white;
+}
+
+/* ===== ГАЛЕРЕЯ ===== */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
+  margin-top:10px;
+}
+
+img{
+  width:100%;
+  border-radius:8px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="notif">📢</div>
+<div id="уведомление">📢</div>
 
-<div class="app">
+<!-- ГЛАВНЫЙ ЭКРАН -->
+<div id="дом" class="экран">
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <button onclick="openApp('weather')">🌦</button>
-    <button onclick="openApp('chat')">💬</button>
-    <button onclick="openApp('notes')">📝</button>
-    <button onclick="openApp('games')">🎮</button>
-  </div>
-
-  <div class="content"></div>
+  <div class="иконка" onclick="открыть('галерея')">📷<br>Галерея</div>
+  <div class="иконка" onclick="открыть('чат')">💬<br>Чат</div>
+  <div class="иконка" onclick="открыть('заметки')">📝<br>Заметки</div>
+  <div class="иконка" onclick="открыть('погода')">🌦<br>Погода</div>
 
 </div>
 
+<!-- ПРИЛОЖЕНИЕ -->
+<div id="app" class="app"></div>
+
 <script>
 
-let z=1;
+let текущее="дом";
 
 /* ===== УВЕДОМЛЕНИЯ ===== */
-function notify(text){
-  const n=document.getElementById("notif");
-  n.innerText="📢 "+text;
+function уведомить(t){
+  const n=document.getElementById("уведомление");
+  n.innerText="📢 "+t;
   n.style.display="block";
-
-  setTimeout(()=>{
-    n.style.display="none";
-  },2000);
+  setTimeout(()=>n.style.display="none",2000);
 }
 
-/* ===== ЗВУК ===== */
-function sound(){
-  try{
-    let a=new Audio("https://actions.google.com/sounds/v1/ui/click.ogg");
-    a.play();
-  }catch(e){}
-}
+/* ===== ОТКРЫТЬ ПРИЛОЖЕНИЕ ===== */
+function открыть(тип){
 
-/* ===== ВИБРАЦИЯ ===== */
-function vib(){
-  if(navigator.vibrate){
-    navigator.vibrate(30);
-  }
-}
+  текущее=тип;
 
-/* ===== OPEN APP ===== */
-function openApp(type){
+  document.getElementById("дом").style.display="none";
 
-  sound();
-  vib();
-  notify("Открыто: "+type);
+  const app=document.getElementById("app");
+  app.style.display="flex";
 
-  const w=document.createElement("div");
-  w.className="window";
+  let c="";
 
-  w.style.top="50%";
-  w.style.left="50%";
-  w.style.transformOrigin="center";
-  w.style.zIndex=z++;
-
-  let content="";
-
-  if(type==="weather"){
-    content="🌦 Loading...";
-    loadWeather(w);
+  if(тип==="галерея"){
+    c=`
+      <button class="back" onclick="назад()">← Назад</button>
+      📷 Галерея
+      <input type="file" accept="image/*" onchange="загрузитьФото(event)">
+      <div id="галерея" class="grid"></div>
+    `;
+    setTimeout(загрузитьГалерею,100);
   }
 
-  if(type==="chat"){
-    content=`
-      💬 Chat
-      <div id="chatBox"></div>
-      <input id="msg">
-      <button onclick="send()">Send</button>
+  if(тип==="чат"){
+    c=`
+      <button class="back" onclick="назад()">← Назад</button>
+      💬 Чат
+      <input id="сообщение">
+      <button onclick="отправить()">Отправить</button>
     `;
   }
 
-  if(type==="notes"){
-    content=`
-      📝 Notes
-      <input id="note">
-      <button onclick="addNote()">Add</button>
-      <div id="notesBox"></div>
+  if(тип==="заметки"){
+    c=`
+      <button class="back" onclick="назад()">← Назад</button>
+      📝 Заметки
+      <input id="заметка">
+      <button onclick="добавить()">Добавить</button>
     `;
   }
 
-  if(type==="games"){
-    content="🎮 Games";
+  if(тип==="погода"){
+    c=`
+      <button class="back" onclick="назад()">← Назад</button>
+      🌦 загрузка...
+    `;
+    погода();
   }
 
-  w.innerHTML=`
-    <div class="titlebar">
-      <span>${type}</span>
-      <span class="close" onclick="closeWin(this)">✕</span>
-    </div>
-    <div class="win-content">${content}</div>
-  `;
+  app.innerHTML=c;
 
-  document.body.appendChild(w);
-
-  requestAnimationFrame(()=>{
-    w.classList.add("open");
-  });
-
-  drag(w);
+  уведомить("Открыто: "+тип);
 }
 
-/* ===== CLOSE ===== */
-function closeWin(el){
-  const w=el.parentElement.parentElement;
-  w.classList.remove("open");
-  setTimeout(()=>w.remove(),200);
+/* ===== НАЗАД ===== */
+function назад(){
+  document.getElementById("app").style.display="none";
+  document.getElementById("дом").style.display="grid";
 }
 
-/* ===== DRAG ===== */
-function drag(el){
-  let dx,dy,drag=false;
-
-  el.querySelector(".titlebar").onmousedown=(e)=>{
-    drag=true;
-    dx=e.clientX-el.offsetLeft;
-    dy=e.clientY-el.offsetTop;
-  };
-
-  document.onmousemove=(e)=>{
-    if(drag){
-      el.style.left=(e.clientX-dx)+"px";
-      el.style.top=(e.clientY-dy)+"px";
-    }
-  };
-
-  document.onmouseup=()=>drag=false;
-}
-
-/* ===== WEATHER ===== */
-async function loadWeather(win){
+/* ===== ПОГОДА ===== */
+async function погода(){
   const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=50.11&longitude=8.68&current_weather=true");
   const d=await r.json();
-  win.querySelector(".win-content").innerHTML="🌦 "+d.current_weather.temperature+"°C";
+  document.getElementById("app").innerHTML=`
+    <button class="back" onclick="назад()">← Назад</button>
+    🌦 Температура: ${d.current_weather.temperature}°C
+  `;
 }
 
-/* ===== CHAT ===== */
-function send(){
-  let m=document.getElementById("msg");
-  if(!m) return;
-
-  let c=JSON.parse(localStorage.getItem("chat")||"[]");
+/* ===== ЧАТ ===== */
+function отправить(){
+  let m=document.getElementById("сообщение");
+  let c=JSON.parse(localStorage.getItem("чат")||"[]");
   c.push(m.value);
-  localStorage.setItem("chat",JSON.stringify(c));
+  localStorage.setItem("чат",JSON.stringify(c));
   m.value="";
 }
 
-/* ===== NOTES ===== */
-function addNote(){
-  let n=document.getElementById("note");
-  if(!n) return;
+/* ===== ЗАМЕТКИ ===== */
+function добавить(){
+  let z=document.getElementById("заметка");
+  let a=JSON.parse(localStorage.getItem("заметки")||"[]");
+  a.push(z.value);
+  localStorage.setItem("заметки",JSON.stringify(a));
+  z.value="";
+}
 
-  let a=JSON.parse(localStorage.getItem("notes")||"[]");
-  a.push(n.value);
-  localStorage.setItem("notes",JSON.stringify(a));
-  n.value="";
+/* ===== ГАЛЕРЕЯ ===== */
+function загрузитьФото(e){
+  const f=e.target.files[0];
+  const r=new FileReader();
+
+  r.onload=function(){
+    let a=JSON.parse(localStorage.getItem("фото")||"[]");
+    a.push(r.result);
+    localStorage.setItem("фото",JSON.stringify(a));
+    загрузитьГалерею();
+  };
+
+  r.readAsDataURL(f);
+}
+
+function загрузитьГалерею(){
+  const g=document.getElementById("галерея");
+  if(!g) return;
+
+  let a=JSON.parse(localStorage.getItem("фото")||"[]");
+  g.innerHTML="";
+
+  a.forEach(img=>{
+    let el=document.createElement("img");
+    el.src=img;
+    g.appendChild(el);
+  });
 }
 
 </script>
