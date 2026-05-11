@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Погода</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        h1 { margin-bottom: 20px; }
+        .container {
+            width: 90%;
+            max-width: 400px;
+        }
+        .search {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .search input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 20px;
+            border: none;
+            font-size: 1rem;
+        }
+        .search button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .weather-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+        }
+        .back-link {
+            margin-top: 30px;
+            color: white;
+            text-decoration: none;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌤️ Погода</h1>
+    <div class="container">
+        <div class="search">
+            <input type="text" id="cityInput" placeholder="Город (например, Moscow)">
+            <button onclick="getWeather()">🔍</button>
+        </div>
+        <div class="weather-card" id="weatherInfo">Введите город и нажмите поиск</div>
+    </div>
+    <a href="index.html" class="back-link">← На главную</a>
+
+    <script>
+        async function getWeather() {
+            const city = document.getElementById('cityInput').value.trim();
+            if (!city) return;
+
+            const info = document.getElementById('weatherInfo');
+            info.textContent = 'Загрузка...';
+
+            try {
+                // Получаем координаты города
+                const geoUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(city)}&limit=1`;
+                const geoResp = await fetch(geoUrl);
+                const geoData = await geoResp.json();
+                if (!geoData.length) throw new Error('Город не найден');
+
+                const { lat, lon } = geoData[0];
+
+                // Получаем погоду (Open-Meteo, без ключа)
+                const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&timezone=auto`;
+                const weatherResp = await fetch(weatherUrl);
+                const weatherData = await weatherResp.json();
+                const weather = weatherData.current_weather;
+
+                info.innerHTML = `
+                    <h2>${geoData[0].display_name.split(',')[0]}</h2>
+                    <p style="font-size: 3rem;">${weather.temperature}°C</p>
+                    <p>Скорость ветра: ${weather.windspeed} км/ч</p>
+                `;
+            } catch (e) {
+                info.textContent = 'Ошибка: ' + e.message;
+            }
+        }
+    </script>
+</body>
+</html>
