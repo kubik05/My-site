@@ -3,31 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Мой телефон</title>
+<title>Моя система</title>
 
 <style>
 body{
   margin:0;
   font-family:Arial;
-  background: radial-gradient(circle at top, #0b0b14, #05050a);
-  color:white;
   overflow:hidden;
-}
+  color:white;
 
-/* ===== УВЕДОМЛЕНИЕ ===== */
-#уведомление{
-  position:absolute;
-  top:20px;
-  right:20px;
-  background:rgba(255,255,255,0.08);
-  padding:10px;
-  border-radius:12px;
-  display:none;
-  backdrop-filter:blur(10px);
+  background:
+    radial-gradient(circle at 20% 20%, #6c5cff55, transparent 40%),
+    radial-gradient(circle at 80% 30%, #00ffd055, transparent 40%),
+    radial-gradient(circle at 50% 80%, #ff4fd855, transparent 50%),
+    #0a0a12;
 }
 
 /* ===== ГЛАВНЫЙ ЭКРАН ===== */
-.экран{
+#дом{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:15px;
@@ -36,15 +29,14 @@ body{
   align-content:start;
 }
 
-/* ===== ИКОНКИ ===== */
 .иконка{
   background:rgba(255,255,255,0.06);
   border-radius:18px;
   height:90px;
   display:flex;
   flex-direction:column;
-  align-items:center;
   justify-content:center;
+  align-items:center;
   cursor:pointer;
   user-select:none;
 }
@@ -53,8 +45,8 @@ body{
   transform:scale(1.05);
 }
 
-/* ===== ПРИЛОЖЕНИЕ (ПОЛНЫЙ ЭКРАН) ===== */
-.app{
+/* ===== ПРИЛОЖЕНИЕ ===== */
+#app{
   position:fixed;
   top:0;
   left:0;
@@ -63,33 +55,32 @@ body{
   background:rgba(10,10,20,0.98);
   display:none;
   flex-direction:column;
-  z-index:999;
   padding:15px;
 }
 
 /* ===== КНОПКА НАЗАД ===== */
 .back{
   padding:10px;
-  margin-bottom:10px;
   background:linear-gradient(135deg,#5c6cff,#4fd1c5);
   border:none;
   border-radius:10px;
   color:white;
+  margin-bottom:10px;
 }
 
 /* ===== ПОЛЯ ===== */
 input{
   width:100%;
   padding:10px;
-  margin-top:10px;
+  margin-top:8px;
   background:#111;
   border:1px solid #333;
-  border-radius:8px;
   color:white;
+  border-radius:8px;
 }
 
 button{
-  margin-top:10px;
+  margin-top:8px;
   padding:10px;
   background:linear-gradient(135deg,#5c6cff,#4fd1c5);
   border:none;
@@ -107,48 +98,54 @@ button{
 
 img{
   width:100%;
-  border-radius:8px;
+  border-radius:10px;
+}
+
+/* ===== УВЕДОМЛЕНИЕ ===== */
+#notif{
+  position:absolute;
+  top:20px;
+  right:20px;
+  background:rgba(255,255,255,0.08);
+  padding:10px;
+  border-radius:10px;
+  display:none;
 }
 </style>
 </head>
 
 <body>
 
-<div id="уведомление">📢</div>
+<div id="notif">📢</div>
 
 <!-- ГЛАВНЫЙ ЭКРАН -->
-<div id="дом" class="экран">
+<div id="дом">
 
   <div class="иконка" onclick="открыть('галерея')">📷<br>Галерея</div>
   <div class="иконка" onclick="открыть('чат')">💬<br>Чат</div>
   <div class="иконка" onclick="открыть('заметки')">📝<br>Заметки</div>
   <div class="иконка" onclick="открыть('погода')">🌦<br>Погода</div>
+  <div class="иконка" onclick="открыть('игры')">🎮<br>Игры</div>
 
 </div>
 
 <!-- ПРИЛОЖЕНИЕ -->
-<div id="app" class="app"></div>
+<div id="app"></div>
 
 <script>
 
-let текущее="дом";
-
-/* ===== УВЕДОМЛЕНИЯ ===== */
 function уведомить(t){
-  const n=document.getElementById("уведомление");
+  const n=document.getElementById("notif");
   n.innerText="📢 "+t;
   n.style.display="block";
   setTimeout(()=>n.style.display="none",2000);
 }
 
-/* ===== ОТКРЫТЬ ПРИЛОЖЕНИЕ ===== */
+/* ===== ОТКРЫТЬ ===== */
 function открыть(тип){
 
-  текущее=тип;
-
   document.getElementById("дом").style.display="none";
-
-  const app=document.getElementById("app");
+  let app=document.getElementById("app");
   app.style.display="flex";
 
   let c="";
@@ -182,15 +179,31 @@ function открыть(тип){
   }
 
   if(тип==="погода"){
-    c=`
-      <button class="back" onclick="назад()">← Назад</button>
-      🌦 загрузка...
-    `;
+    c=`<button class="back" onclick="назад()">← Назад</button> 🌦 загрузка...`;
     погода();
   }
 
-  app.innerHTML=c;
+  if(тип==="игры"){
+    c=`
+      <button class="back" onclick="назад()">← Назад</button>
 
+      🎮 Игры
+
+      <h3>🟩 Кликер</h3>
+      <button onclick="кликер()">Клик</button>
+      <div id="score">0</div>
+
+      <h3>🎯 Угадай число</h3>
+      <input id="guess">
+      <button onclick="угадай()">Проверить</button>
+
+      <h3>⚫ Реакция</h3>
+      <button onclick="реакция()">Старт</button>
+      <div id="time"></div>
+    `;
+  }
+
+  app.innerHTML=c;
   уведомить("Открыто: "+тип);
 }
 
@@ -206,7 +219,7 @@ async function погода(){
   const d=await r.json();
   document.getElementById("app").innerHTML=`
     <button class="back" onclick="назад()">← Назад</button>
-    🌦 Температура: ${d.current_weather.temperature}°C
+    🌦 ${d.current_weather.temperature}°C
   `;
 }
 
@@ -230,8 +243,8 @@ function добавить(){
 
 /* ===== ГАЛЕРЕЯ ===== */
 function загрузитьФото(e){
-  const f=e.target.files[0];
-  const r=new FileReader();
+  let f=e.target.files[0];
+  let r=new FileReader();
 
   r.onload=function(){
     let a=JSON.parse(localStorage.getItem("фото")||"[]");
@@ -244,7 +257,7 @@ function загрузитьФото(e){
 }
 
 function загрузитьГалерею(){
-  const g=document.getElementById("галерея");
+  let g=document.getElementById("галерея");
   if(!g) return;
 
   let a=JSON.parse(localStorage.getItem("фото")||"[]");
@@ -255,6 +268,28 @@ function загрузитьГалерею(){
     el.src=img;
     g.appendChild(el);
   });
+}
+
+/* ===== ИГРЫ ===== */
+let score=0;
+
+function кликер(){
+  score++;
+  document.getElementById("score").innerText=score;
+}
+
+function угадай(){
+  let n=Math.floor(Math.random()*10)+1;
+  let g=document.getElementById("guess").value;
+  alert(g==n?"✔ угадал":"❌ было "+n);
+}
+
+function реакция(){
+  let start=Date.now();
+  setTimeout(()=>{
+    let t=Date.now()-start;
+    document.getElementById("time").innerText=t+" мс";
+  },Math.random()*2000);
 }
 
 </script>
