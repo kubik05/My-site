@@ -14,13 +14,13 @@ body {
   overflow: hidden;
 }
 
-/* ===== APP LAYOUT ===== */
+/* LAYOUT */
 .app {
   display: flex;
   height: 100vh;
 }
 
-/* ===== SIDEBAR (ANDROID STYLE) ===== */
+/* SIDEBAR (ANDROID) */
 .sidebar {
   width: 70px;
   background: #181818;
@@ -44,20 +44,20 @@ body {
   border-radius: 12px;
 }
 
-/* ===== CONTENT ===== */
+/* CONTENT */
 .content {
   flex: 1;
   position: relative;
 }
 
-/* ===== SCREENS (LIKE APPS) ===== */
+/* SCREENS */
 .screen {
   position: absolute;
   width: 100%;
   height: 100%;
   padding: 20px;
   opacity: 0;
-  transform: translateX(20px);
+  transform: translateX(30px);
   transition: 0.25s ease;
   pointer-events: none;
 }
@@ -68,33 +68,33 @@ body {
   pointer-events: auto;
 }
 
-/* ===== CARD UI ===== */
+/* BOTTOM DOCK (iOS STYLE) */
+.dock {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px;
+  background: #111;
+  border-top: 1px solid #222;
+}
+
+.dock button {
+  background: #222;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+/* CARD */
 .card {
   background: #1f1f1f;
   padding: 15px;
-  border-radius: 14px;
+  border-radius: 12px;
   margin-top: 10px;
-}
-
-/* ===== INPUTS ===== */
-input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  background: #111;
-  border: 1px solid #333;
-  color: white;
-  border-radius: 10px;
-}
-
-button {
-  margin-top: 10px;
-  padding: 10px;
-  background: #333;
-  border: none;
-  color: white;
-  border-radius: 10px;
-  cursor: pointer;
 }
 </style>
 </head>
@@ -106,8 +106,7 @@ button {
   <!-- SIDEBAR -->
   <div class="sidebar">
     <button onclick="show('home')">🏠</button>
-    <button onclick="show('games')">🎮</button>
-    <button onclick="show('tools')">🌦</button>
+    <button onclick="show('apps')">📦</button>
     <button onclick="show('chat')">💬</button>
     <button onclick="show('profile')">👤</button>
   </div>
@@ -115,50 +114,53 @@ button {
   <!-- CONTENT -->
   <div class="content">
 
-    <!-- HOME -->
     <div id="home" class="screen active">
       <h1>Home</h1>
-      <div class="card">Добро пожаловать в My App OS</div>
+      <div class="card">Welcome to App OS</div>
     </div>
 
-    <!-- GAMES -->
-    <div id="games" class="screen">
-      <h1>Games</h1>
-      <div class="card">Игры будут здесь</div>
-    </div>
-
-    <!-- WEATHER -->
-    <div id="tools" class="screen">
-      <h1>Weather</h1>
+    <div id="apps" class="screen">
+      <h1>Apps</h1>
 
       <div class="card">
-        <p>Frankfurt</p>
-        <p id="weather">Загрузка...</p>
+        <button onclick="show('weatherApp')">Weather</button>
+        <button onclick="show('notesApp')">Notes</button>
+        <button onclick="show('games')">Games</button>
       </div>
     </div>
 
-    <!-- CHAT -->
+    <div id="weatherApp" class="screen">
+      <h1>Weather</h1>
+      <div class="card" id="weather">Loading...</div>
+    </div>
+
+    <div id="notesApp" class="screen">
+      <h1>Notes</h1>
+
+      <input id="noteInput" placeholder="New note">
+      <button onclick="addNote()">Add</button>
+
+      <div id="notes"></div>
+    </div>
+
     <div id="chat" class="screen">
       <h1>Chat</h1>
 
       <div class="card">
         <div id="chatBox"></div>
-
-        <input id="msg" placeholder="Напиши сообщение...">
-        <button onclick="send()">Отправить</button>
+        <input id="msg" placeholder="Message">
+        <button onclick="send()">Send</button>
       </div>
     </div>
 
-    <!-- PROFILE -->
+    <div id="games" class="screen">
+      <h1>Games</h1>
+      <div class="card">Mini games coming</div>
+    </div>
+
     <div id="profile" class="screen">
       <h1>Profile</h1>
-
-      <div class="card">
-        <input id="name" placeholder="Введите имя">
-        <button onclick="saveName()">Сохранить</button>
-
-        <p id="user"></p>
-      </div>
+      <div class="card">User profile</div>
     </div>
 
   </div>
@@ -166,45 +168,33 @@ button {
 
 <script>
 
-/* ===== ROUTER ===== */
+/* ROUTER */
 function show(id) {
-  document.querySelectorAll('.screen').forEach(s => {
-    s.classList.remove('active');
-  });
-
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   location.hash = id;
 }
 
+/* INIT */
 window.addEventListener('load', () => {
-  const page = location.hash.replace('#', '') || 'home';
+  const page = location.hash.replace('#','') || 'home';
   show(page);
-
   loadWeather();
-  loadChat();
-  loadProfile();
+  loadNotes();
 });
 
-/* ===== WEATHER (REAL API WITHOUT KEY) ===== */
+/* WEATHER API */
 async function loadWeather() {
   const el = document.getElementById("weather");
-
-  try {
-    const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=50.11&longitude=8.68&current_weather=true");
-    const data = await res.json();
-
-    el.innerText = `Температура: ${data.current_weather.temperature}°C`;
-  } catch {
-    el.innerText = "Ошибка загрузки погоды";
-  }
+  const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=50.11&longitude=8.68&current_weather=true");
+  const data = await res.json();
+  el.innerText = `Temp: ${data.current_weather.temperature}°C`;
 }
 
-/* ===== CHAT (LOCAL STORAGE) ===== */
+/* CHAT */
 function send() {
   const msg = document.getElementById("msg");
   const box = document.getElementById("chatBox");
-
-  if (!msg.value) return;
 
   const messages = JSON.parse(localStorage.getItem("chat") || "[]");
   messages.push(msg.value);
@@ -217,22 +207,25 @@ function send() {
 function loadChat() {
   const box = document.getElementById("chatBox");
   const messages = JSON.parse(localStorage.getItem("chat") || "[]");
-
   box.innerHTML = messages.map(m => `<div>💬 ${m}</div>`).join("");
 }
+loadChat();
 
-/* ===== PROFILE (SAVE NAME) ===== */
-function saveName() {
-  const name = document.getElementById("name").value;
-  localStorage.setItem("name", name);
-  loadProfile();
+/* NOTES */
+function addNote() {
+  const input = document.getElementById("noteInput");
+  const notes = JSON.parse(localStorage.getItem("notes") || "[]");
+  notes.push(input.value);
+  localStorage.setItem("notes", JSON.stringify(notes));
+  input.value = "";
+  loadNotes();
 }
 
-function loadProfile() {
-  const name = localStorage.getItem("name") || "Guest";
-  document.getElementById("user").innerText = "Имя: " + name;
+function loadNotes() {
+  const box = document.getElementById("notes");
+  const notes = JSON.parse(localStorage.getItem("notes") || "[]");
+  box.innerHTML = notes.map(n => `<div class="card">📝 ${n}</div>`).join("");
 }
-
 </script>
 
 </body>
