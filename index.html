@@ -17,35 +17,65 @@ body {
 header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 15px;
     background: #111827;
+    position: sticky;
+    top: 0;
 }
 
 nav button {
-    background: none;
+    background: #1f2937;
     border: none;
     color: white;
     margin: 0 5px;
+    padding: 8px 12px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 16px;
+    transition: 0.2s;
+}
+
+nav button:hover {
+    background: #374151;
 }
 
 /* SCREENS */
 .screen {
     display: none;
     padding: 20px;
+    animation: fade 0.3s ease-in-out;
 }
 
 .active {
     display: block;
 }
 
+@keyframes fade {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* CARD */
 .card {
     background: #1f2937;
     padding: 15px;
-    border-radius: 10px;
+    border-radius: 12px;
     margin: 10px 0;
+    transition: 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+/* BUTTON */
+.big-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    background: #22c55e;
+    color: white;
+    cursor: pointer;
 }
 </style>
 </head>
@@ -56,39 +86,59 @@ nav button {
 <h2>🔥 KUBIK APP</h2>
 
 <nav>
-<button onclick="show('home')">🏠</button>
-<button onclick="show('games')">🎮</button>
-<button onclick="show('tools')">🛠</button>
-<button onclick="show('ai')">🤖</button>
+<button onclick="show('home')">🏠 Главная</button>
+<button onclick="show('games')">🎮 Игры</button>
+<button onclick="show('tools')">🛠 Инструменты</button>
+<button onclick="show('profile')">👤 Профиль</button>
 </nav>
 </header>
 
 <!-- HOME -->
 <div id="home" class="screen active">
 <h2>Главная</h2>
-<div class="card">Добро пожаловать в приложение 🚀</div>
+
+<div class="card">
+Добро пожаловать в твой сайт-приложение 🚀
+</div>
+
+<button class="big-btn" onclick="alert('Привет 👋')">
+Нажми меня
+</button>
 </div>
 
 <!-- GAMES -->
 <div id="games" class="screen">
 <h2>Игры</h2>
-<div class="card">🎮 Ферма</div>
-<div class="card">🐍 Змейка</div>
-<div class="card">🧠 Кликер</div>
+
+<div class="card">🎮 Ферма (скоро)</div>
+<div class="card">🐍 Змейка (скоро)</div>
+<div class="card">🧠 Кликер (скоро)</div>
 </div>
 
 <!-- TOOLS -->
 <div id="tools" class="screen">
 <h2>Инструменты</h2>
-<div class="card">🌤 Погода</div>
-<div class="card">📝 Заметки</div>
-<div class="card">🔐 Генератор паролей</div>
+
+<div class="card">🌤 Погода (у тебя уже есть отдельная страница)</div>
+
+<div class="card">
+<button class="big-btn" onclick="changeColor()">
+🎨 Сменить фон
+</button>
+</div>
 </div>
 
-<!-- AI -->
-<div id="ai" class="screen">
-<h2>AI Чат</h2>
-<div class="card">🤖 Тут будет твой AI чат</div>
+<!-- PROFILE -->
+<div id="profile" class="screen">
+<h2>Профиль</h2>
+
+<div class="card">
+Имя: <span id="name">Гость</span>
+</div>
+
+<button class="big-btn" onclick="setName()">
+✏ Изменить имя
+</button>
 </div>
 
 <script>
@@ -96,6 +146,27 @@ function show(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
 }
+
+/* смена фона */
+function changeColor() {
+    const colors = ["#0f172a", "#1e293b", "#111827", "#0b1220"];
+    document.body.style.background = colors[Math.floor(Math.random() * colors.length)];
+}
+
+/* профиль */
+function setName() {
+    let name = prompt("Введи имя:");
+    if (name) {
+        document.getElementById("name").textContent = name;
+        localStorage.setItem("name", name);
+    }
+}
+
+/* загрузка имени */
+window.onload = function() {
+    const saved = localStorage.getItem("name");
+    if (saved) document.getElementById("name").textContent = saved;
+};
 </script>
 
 </body>
