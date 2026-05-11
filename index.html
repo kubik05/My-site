@@ -1,173 +1,96 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kubik App</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My App</title>
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #0f172a;
-    color: white;
-}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+    }
 
-/* HEADER */
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    background: #111827;
-    position: sticky;
-    top: 0;
-}
+    nav {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      background: #222;
+    }
 
-nav button {
-    background: #1f2937;
-    border: none;
-    color: white;
-    margin: 0 5px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.2s;
-}
+    nav button {
+      color: white;
+      background: #444;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+    }
 
-nav button:hover {
-    background: #374151;
-}
+    nav button:hover {
+      background: #666;
+    }
 
-/* SCREENS */
-.screen {
-    display: none;
-    padding: 20px;
-    animation: fade 0.3s ease-in-out;
-}
+    .screen {
+      display: none;
+      padding: 20px;
+    }
 
-.active {
-    display: block;
-}
-
-@keyframes fade {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* CARD */
-.card {
-    background: #1f2937;
-    padding: 15px;
-    border-radius: 12px;
-    margin: 10px 0;
-    transition: 0.2s;
-}
-
-.card:hover {
-    transform: scale(1.02);
-}
-
-/* BUTTON */
-.big-btn {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 10px;
-    background: #22c55e;
-    color: white;
-    cursor: pointer;
-}
-</style>
+    .screen.active {
+      display: block;
+    }
+  </style>
 </head>
 
 <body>
 
-<header>
-<h2>🔥 KUBIK APP</h2>
+  <!-- НАВИГАЦИЯ -->
+  <nav>
+    <button onclick="show('home')">Home</button>
+    <button onclick="show('games')">Games</button>
+    <button onclick="show('tools')">Tools</button>
+    <button onclick="show('profile')">Profile</button>
+  </nav>
 
-<nav>
-<button onclick="show('home')">🏠 Главная</button>
-<button onclick="show('games')">🎮 Игры</button>
-<button onclick="show('tools')">🛠 Инструменты</button>
-<button onclick="show('profile')">👤 Профиль</button>
-</nav>
-</header>
+  <!-- ЭКРАНЫ -->
+  <div id="home" class="screen active">
+    <h1>🏠 Home</h1>
+    <p>Главная страница</p>
+  </div>
 
-<!-- HOME -->
-<div id="home" class="screen active">
-<h2>Главная</h2>
+  <div id="games" class="screen">
+    <h1>🎮 Games</h1>
+    <p>Раздел игр</p>
+  </div>
 
-<div class="card">
-Добро пожаловать в твой сайт-приложение 🚀
-</div>
+  <div id="tools" class="screen">
+    <h1>🛠 Tools</h1>
+    <p>Раздел инструментов</p>
+  </div>
 
-<button class="big-btn" onclick="alert('Привет 👋')">
-Нажми меня
-</button>
-</div>
+  <div id="profile" class="screen">
+    <h1>👤 Profile</h1>
+    <p>Твой профиль</p>
+  </div>
 
-<!-- GAMES -->
-<div id="games" class="screen">
-<h2>Игры</h2>
+  <!-- JS ЛОГИКА -->
+  <script>
+    function show(id) {
+      document.querySelectorAll('.screen').forEach(s => {
+        s.classList.remove('active');
+      });
 
-<div class="card">🎮 Ферма (скоро)</div>
-<div class="card">🐍 Змейка (скоро)</div>
-<div class="card">🧠 Кликер (скоро)</div>
-</div>
+      document.getElementById(id).classList.add('active');
 
-<!-- TOOLS -->
-<div id="tools" class="screen">
-<h2>Инструменты</h2>
-
-<div class="card">🌤 Погода (у тебя уже есть отдельная страница)</div>
-
-<div class="card">
-<button class="big-btn" onclick="changeColor()">
-🎨 Сменить фон
-</button>
-</div>
-</div>
-
-<!-- PROFILE -->
-<div id="profile" class="screen">
-<h2>Профиль</h2>
-
-<div class="card">
-Имя: <span id="name">Гость</span>
-</div>
-
-<button class="big-btn" onclick="setName()">
-✏ Изменить имя
-</button>
-</div>
-
-<script>
-function show(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-}
-
-/* смена фона */
-function changeColor() {
-    const colors = ["#0f172a", "#1e293b", "#111827", "#0b1220"];
-    document.body.style.background = colors[Math.floor(Math.random() * colors.length)];
-}
-
-/* профиль */
-function setName() {
-    let name = prompt("Введи имя:");
-    if (name) {
-        document.getElementById("name").textContent = name;
-        localStorage.setItem("name", name);
+      // сохраняем состояние в URL
+      location.hash = id;
     }
-}
 
-/* загрузка имени */
-window.onload = function() {
-    const saved = localStorage.getItem("name");
-    if (saved) document.getElementById("name").textContent = saved;
-};
-</script>
+    // запуск при загрузке
+    window.addEventListener('load', () => {
+      const page = location.hash.replace('#', '') || 'home';
+      show(page);
+    });
+  </script>
 
 </body>
 </html>
