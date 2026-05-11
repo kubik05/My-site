@@ -3,50 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой первый сайт</title>
+    <title>Мой сайт-комбайн</title>
     <style>
         body {
             margin: 0;
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             color: white;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
+            padding: 20px;
         }
         h1 {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+            margin: 20px 0;
+            text-align: center;
         }
-        p {
-            font-size: 1.2rem;
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
             max-width: 600px;
-            margin-bottom: 1.5rem;
+            margin-top: 30px;
         }
-        .btn {
-            background: white;
-            color: #667eea;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 30px;
+        .menu a {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px 30px;
+            text-decoration: none;
+            color: white;
             font-size: 1.2rem;
             font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-            text-decoration: none;
-            display: inline-block;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s, background 0.3s;
+            width: 120px;
+            text-align: center;
         }
-        .btn:hover {
+        .menu a:hover {
             transform: scale(1.05);
+            background: rgba(255,255,255,0.2);
+        }
+        .menu .emoji {
+            font-size: 3rem;
+        }
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            opacity: 0.6;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <h1>Привет, мир! 🚀</h1>
-    <p>Это мой первый сайт, созданный с телефона. Я умею программировать и развиваться без границ.</p>
-    <a href="#" class="btn">Связаться со мной</a>
+    <h1>🛠️ Мой сайт-комбайн</h1>
+    <p>Здесь собраны все мои инструменты и игры</p>
+    <div class="menu">
+        <a href="games.html">
+            <span class="emoji">🎮</span>
+            Игры
+        </a>
+        <a href="tools.html">
+            <span class="emoji">🧮</span>
+            Инструменты
+        </a>
+        <a href="aichat.html">
+            <span class="emoji">🤖</span>
+            AI-чат
+        </a>
+        <a href="drawing.html">
+            <span class="emoji">🎨</span>
+            Рисовалка
+        </a>
+    </div>
+    <footer>
+        Сделано на телефоне с помощью DeepSeek 💪
+    </footer>
 </body>
 </html>
