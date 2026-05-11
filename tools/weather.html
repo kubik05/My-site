@@ -16,16 +16,20 @@
             align-items: center;
             padding: 20px;
         }
+
         h1 { margin-bottom: 20px; }
+
         .container {
             width: 90%;
             max-width: 400px;
         }
+
         .search {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
         }
+
         .search input {
             flex: 1;
             padding: 12px;
@@ -33,6 +37,7 @@
             border: none;
             font-size: 1rem;
         }
+
         .search button {
             background: #4CAF50;
             color: white;
@@ -42,6 +47,7 @@
             font-size: 1rem;
             cursor: pointer;
         }
+
         .weather-card {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
@@ -49,6 +55,7 @@
             padding: 20px;
             text-align: center;
         }
+
         .back-link {
             margin-top: 30px;
             color: white;
@@ -56,19 +63,27 @@
             background: rgba(255,255,255,0.2);
             padding: 10px 20px;
             border-radius: 20px;
+            display: inline-block;
         }
     </style>
 </head>
+
 <body>
     <h1>🌤️ Погода</h1>
+
     <div class="container">
         <div class="search">
             <input type="text" id="cityInput" placeholder="Город (например, Moscow)">
             <button onclick="getWeather()">🔍</button>
         </div>
-        <div class="weather-card" id="weatherInfo">Введите город и нажмите поиск</div>
+
+        <div class="weather-card" id="weatherInfo">
+            Введите город и нажмите поиск
+        </div>
     </div>
-    <a href="index.html" class="back-link">← На главную</a>
+
+    <!-- 🔥 ИСПРАВЛЕННАЯ ССЫЛКА -->
+    <a href="../index.html" class="back-link">← На главную</a>
 
     <script>
         async function getWeather() {
@@ -79,15 +94,14 @@
             info.textContent = 'Загрузка...';
 
             try {
-                // Получаем координаты города
                 const geoUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(city)}&limit=1`;
                 const geoResp = await fetch(geoUrl);
                 const geoData = await geoResp.json();
+
                 if (!geoData.length) throw new Error('Город не найден');
 
                 const { lat, lon } = geoData[0];
 
-                // Получаем погоду (Open-Meteo, без ключа)
                 const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&timezone=auto`;
                 const weatherResp = await fetch(weatherUrl);
                 const weatherData = await weatherResp.json();
