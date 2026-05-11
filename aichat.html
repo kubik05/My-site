@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Чат</title>
     <style>
+        /* стили остаются те же, что и раньше */
         body {
             margin: 0;
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -68,7 +69,9 @@
     <a href="index.html" class="back-link">← На главную</a>
 
     <script>
-        const API_KEY = "AIzaSyAjyc2cSvA4yboB87q24NrOlt7XfzcapAM"; // ← ВСТАВЬ СВОЙ КЛЮЧ
+        // ВСТАВЬТЕ СВОЙ API-КЛЮЧ ЗДЕСЬ
+        const API_KEY = "AIzaSyAjyc2cSvA4yboB87q24NrOlt7XfzcapAM";
+
         async function sendMessage() {
             const input = document.getElementById('userInput');
             const message = input.value.trim();
@@ -78,18 +81,31 @@
             const reply = await askGemini(message);
             addMessage('Бот', reply, 'bot');
         }
+
         async function askGemini(prompt) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-latest:generateContent?key=${API_KEY}`;
             const headers = {'Content-Type': 'application/json'};
             const data = {"contents":[{"parts":[{"text": prompt}]}]};
             try {
-                const resp = await fetch(url, {method:'POST', headers, body:JSON.stringify(data)});
+                const resp = await fetch(url, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(data)
+                });
                 const json = await resp.json();
+                
+                // Проверяем, есть ли кандидаты
+                if (!json.candidates || json.candidates.length === 0) {
+                    console.error('Ответ API:', json);
+                    return 'Ошибка: пустой ответ от ИИ. Проверьте API-ключ и модель.';
+                }
                 return json.candidates[0].content.parts[0].text;
             } catch(e) {
+                console.error('Ошибка сети или JSON:', e);
                 return "Ошибка: " + e.message;
             }
         }
+
         function addMessage(sender, text, cls) {
             const chat = document.getElementById('chat');
             const div = document.createElement('div');
