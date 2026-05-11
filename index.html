@@ -3,18 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Neon OS 2.1</title>
+<title>Android Mini OS</title>
 
 <style>
+/* ===== ОСНОВА ===== */
 body{
   margin:0;
   font-family:Arial;
-  background: radial-gradient(circle at top, #0b0b18, #05050a);
+  background: radial-gradient(circle at top, #0b0b14, #05050a);
   color:white;
   overflow:hidden;
 }
 
-/* ===== APP LAYOUT ===== */
+/* ===== СИСТЕМА ===== */
 .app{
   display:flex;
   height:100vh;
@@ -29,7 +30,6 @@ body{
   flex-direction:column;
   align-items:center;
   padding-top:10px;
-  border-right:1px solid rgba(255,255,255,0.08);
 }
 
 .sidebar button{
@@ -39,249 +39,261 @@ body{
   font-size:20px;
   padding:14px;
   cursor:pointer;
-  transition:0.2s;
 }
 
 .sidebar button:hover{
   transform:scale(1.2);
-  color:#7c5cff;
+  color:#6c7bff;
 }
 
-/* ===== CONTENT ===== */
+/* ===== AREA ===== */
 .content{
   flex:1;
   position:relative;
-  overflow:hidden;
 }
 
-/* ===== SCREENS ===== */
-.screen{
+/* ===== WINDOW ===== */
+.window{
   position:absolute;
-  width:100%;
-  height:100%;
-  padding:20px;
-  opacity:0;
-  transform:translateX(30px);
-  transition:0.25s ease;
-  pointer-events:none;
-}
-
-.screen.active{
-  opacity:1;
-  transform:translateX(0);
-  pointer-events:auto;
-}
-
-/* ===== GLASS CARD ===== */
-.card{
+  width:320px;
+  height:260px;
   background:rgba(255,255,255,0.06);
-  backdrop-filter:blur(12px);
-  padding:15px;
-  border-radius:16px;
-  margin-top:10px;
+  backdrop-filter:blur(18px);
   border:1px solid rgba(255,255,255,0.08);
+  border-radius:18px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
+
+  transform:scale(0.2);
+  opacity:0;
+  transition: transform 280ms cubic-bezier(0.2,0.9,0.2,1), opacity 200ms;
+}
+
+.window.open{
+  transform:scale(1);
+  opacity:1;
+}
+
+/* ===== TITLE BAR ===== */
+.titlebar{
+  background:rgba(0,0,0,0.4);
+  padding:8px;
+  display:flex;
+  justify-content:space-between;
+  cursor:grab;
+  border-radius:18px 18px 0 0;
+}
+
+/* ===== CONTENT ===== */
+.win-content{
+  padding:10px;
+}
+
+/* ===== CLOSE ===== */
+.close{
+  cursor:pointer;
+  color:#ff4d4d;
 }
 
 /* ===== INPUT ===== */
 input{
   width:100%;
-  padding:10px;
-  margin-top:10px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.1);
+  margin-top:8px;
+  padding:8px;
+  background:#111;
+  border:1px solid #333;
   color:white;
-  border-radius:10px;
+  border-radius:8px;
 }
 
 /* ===== BUTTON ===== */
 button{
-  margin-top:10px;
-  padding:10px;
-  background:linear-gradient(135deg,#7c5cff,#4fd1c5);
+  margin-top:8px;
+  padding:8px;
+  background:linear-gradient(135deg,#5c6cff,#4fd1c5);
   border:none;
   color:white;
-  border-radius:10px;
+  border-radius:8px;
   cursor:pointer;
 }
 
-/* ===== DOCK (iOS STYLE) ===== */
-.dock{
+/* ===== NOTIFICATION ===== */
+#notif{
   position:absolute;
-  bottom:10px;
-  left:50%;
-  transform:translateX(-50%);
-  display:flex;
-  gap:12px;
-  background:rgba(255,255,255,0.05);
+  top:20px;
+  right:20px;
+  padding:10px;
+  background:rgba(255,255,255,0.08);
   backdrop-filter:blur(15px);
-  padding:10px 14px;
-  border-radius:20px;
   border:1px solid rgba(255,255,255,0.1);
-}
-
-.dock button{
-  background:none;
-  font-size:18px;
-  padding:8px;
-}
-
-/* ===== SWIPE AREA ===== */
-.swipe-zone{
-  position:absolute;
-  width:100%;
-  height:100%;
+  border-radius:12px;
+  display:none;
 }
 </style>
 </head>
 
 <body>
 
+<div id="notif">📢</div>
+
 <div class="app">
 
   <!-- SIDEBAR -->
   <div class="sidebar">
-    <button onclick="show('home')">🏠</button>
-    <button onclick="show('apps')">📦</button>
-    <button onclick="show('chat')">💬</button>
-    <button onclick="show('profile')">👤</button>
+    <button onclick="openApp('weather')">🌦</button>
+    <button onclick="openApp('chat')">💬</button>
+    <button onclick="openApp('notes')">📝</button>
+    <button onclick="openApp('games')">🎮</button>
   </div>
 
-  <div class="content">
+  <div class="content"></div>
 
-    <!-- SWIPE LAYER -->
-    <div class="swipe-zone" id="swipe"></div>
-
-    <!-- HOME -->
-    <div id="home" class="screen active">
-      <h1>Neon OS</h1>
-      <div class="card">Welcome</div>
-    </div>
-
-    <!-- APPS -->
-    <div id="apps" class="screen">
-      <h1>Apps</h1>
-      <div class="card">
-        <button onclick="show('weather')">🌦 Weather</button>
-        <button onclick="show('notes')">📝 Notes</button>
-        <button onclick="show('games')">🎮 Games</button>
-      </div>
-    </div>
-
-    <!-- WEATHER -->
-    <div id="weather" class="screen">
-      <h1>Weather</h1>
-      <div class="card" id="weatherBox">Loading...</div>
-    </div>
-
-    <!-- NOTES -->
-    <div id="notes" class="screen">
-      <h1>Notes</h1>
-      <input id="noteInput" placeholder="New note">
-      <button onclick="addNote()">Add</button>
-      <div id="notesBox"></div>
-    </div>
-
-    <!-- CHAT -->
-    <div id="chat" class="screen">
-      <h1>Chat</h1>
-      <div class="card">
-        <div id="chatBox"></div>
-        <input id="msg" placeholder="Message">
-        <button onclick="send()">Send</button>
-      </div>
-    </div>
-
-    <!-- PROFILE -->
-    <div id="profile" class="screen">
-      <h1>Profile</h1>
-      <div class="card">User</div>
-    </div>
-
-    <!-- DOCK -->
-    <div class="dock">
-      <button onclick="show('home')">🏠</button>
-      <button onclick="show('apps')">📦</button>
-      <button onclick="show('chat')">💬</button>
-      <button onclick="show('weather')">🌦</button>
-    </div>
-
-  </div>
 </div>
 
 <script>
 
-/* ===== ROUTER ===== */
-function show(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  location.hash=id;
+let z=1;
+
+/* ===== УВЕДОМЛЕНИЯ ===== */
+function notify(text){
+  const n=document.getElementById("notif");
+  n.innerText="📢 "+text;
+  n.style.display="block";
+
+  setTimeout(()=>{
+    n.style.display="none";
+  },2000);
 }
 
-/* INIT */
-window.addEventListener('load',()=>{
-  const page=location.hash.replace('#','')||'home';
-  show(page);
-  loadWeather();
-  loadNotes();
-  loadChat();
-});
+/* ===== ЗВУК ===== */
+function sound(){
+  try{
+    let a=new Audio("https://actions.google.com/sounds/v1/ui/click.ogg");
+    a.play();
+  }catch(e){}
+}
 
-/* ===== SWIPE (BASIC GESTURE SYSTEM) ===== */
-let startX=0;
-
-document.getElementById("swipe").addEventListener("touchstart",e=>{
-  startX=e.touches[0].clientX;
-});
-
-document.getElementById("swipe").addEventListener("touchend",e=>{
-  let endX=e.changedTouches[0].clientX;
-
-  if(startX-endX>50){
-    show('apps'); // swipe left
+/* ===== ВИБРАЦИЯ ===== */
+function vib(){
+  if(navigator.vibrate){
+    navigator.vibrate(30);
   }
-  if(endX-startX>50){
-    show('home'); // swipe right
+}
+
+/* ===== OPEN APP ===== */
+function openApp(type){
+
+  sound();
+  vib();
+  notify("Открыто: "+type);
+
+  const w=document.createElement("div");
+  w.className="window";
+
+  w.style.top="50%";
+  w.style.left="50%";
+  w.style.transformOrigin="center";
+  w.style.zIndex=z++;
+
+  let content="";
+
+  if(type==="weather"){
+    content="🌦 Loading...";
+    loadWeather(w);
   }
-});
+
+  if(type==="chat"){
+    content=`
+      💬 Chat
+      <div id="chatBox"></div>
+      <input id="msg">
+      <button onclick="send()">Send</button>
+    `;
+  }
+
+  if(type==="notes"){
+    content=`
+      📝 Notes
+      <input id="note">
+      <button onclick="addNote()">Add</button>
+      <div id="notesBox"></div>
+    `;
+  }
+
+  if(type==="games"){
+    content="🎮 Games";
+  }
+
+  w.innerHTML=`
+    <div class="titlebar">
+      <span>${type}</span>
+      <span class="close" onclick="closeWin(this)">✕</span>
+    </div>
+    <div class="win-content">${content}</div>
+  `;
+
+  document.body.appendChild(w);
+
+  requestAnimationFrame(()=>{
+    w.classList.add("open");
+  });
+
+  drag(w);
+}
+
+/* ===== CLOSE ===== */
+function closeWin(el){
+  const w=el.parentElement.parentElement;
+  w.classList.remove("open");
+  setTimeout(()=>w.remove(),200);
+}
+
+/* ===== DRAG ===== */
+function drag(el){
+  let dx,dy,drag=false;
+
+  el.querySelector(".titlebar").onmousedown=(e)=>{
+    drag=true;
+    dx=e.clientX-el.offsetLeft;
+    dy=e.clientY-el.offsetTop;
+  };
+
+  document.onmousemove=(e)=>{
+    if(drag){
+      el.style.left=(e.clientX-dx)+"px";
+      el.style.top=(e.clientY-dy)+"px";
+    }
+  };
+
+  document.onmouseup=()=>drag=false;
+}
 
 /* ===== WEATHER ===== */
-async function loadWeather(){
-  const el=document.getElementById("weatherBox");
-  const res=await fetch("https://api.open-meteo.com/v1/forecast?latitude=50.11&longitude=8.68&current_weather=true");
-  const data=await res.json();
-  el.innerHTML=`Temp: ${data.current_weather.temperature}°C`;
+async function loadWeather(win){
+  const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=50.11&longitude=8.68&current_weather=true");
+  const d=await r.json();
+  win.querySelector(".win-content").innerHTML="🌦 "+d.current_weather.temperature+"°C";
 }
 
 /* ===== CHAT ===== */
 function send(){
-  let msg=document.getElementById("msg");
-  let chat=JSON.parse(localStorage.getItem("chat")||"[]");
-  chat.push(msg.value);
-  localStorage.setItem("chat",JSON.stringify(chat));
-  msg.value="";
-  loadChat();
-}
+  let m=document.getElementById("msg");
+  if(!m) return;
 
-function loadChat(){
-  let box=document.getElementById("chatBox");
-  let chat=JSON.parse(localStorage.getItem("chat")||"[]");
-  box.innerHTML=chat.map(m=>`💬 ${m}`).join("<br>");
+  let c=JSON.parse(localStorage.getItem("chat")||"[]");
+  c.push(m.value);
+  localStorage.setItem("chat",JSON.stringify(c));
+  m.value="";
 }
 
 /* ===== NOTES ===== */
 function addNote(){
-  let input=document.getElementById("noteInput");
-  let notes=JSON.parse(localStorage.getItem("notes")||"[]");
-  notes.push(input.value);
-  localStorage.setItem("notes",JSON.stringify(notes));
-  input.value="";
-  loadNotes();
-}
+  let n=document.getElementById("note");
+  if(!n) return;
 
-function loadNotes(){
-  let box=document.getElementById("notesBox");
-  let notes=JSON.parse(localStorage.getItem("notes")||"[]");
-  box.innerHTML=notes.map(n=>`📝 ${n}`).join("<br>");
+  let a=JSON.parse(localStorage.getItem("notes")||"[]");
+  a.push(n.value);
+  localStorage.setItem("notes",JSON.stringify(a));
+  n.value="";
 }
 
 </script>
