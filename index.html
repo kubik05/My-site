@@ -1,64 +1,74 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой сайт-комбайн</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            color: white;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-        h1 { font-size: 2.5rem; margin: 20px 0; text-align: center; }
-        .menu {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            max-width: 600px;
-            margin-top: 30px;
-        }
-        .menu a {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px 30px;
-            text-decoration: none;
-            color: white;
-            font-size: 1.2rem;
-            font-weight: bold;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            transition: transform 0.2s, background 0.3s;
-            width: 120px;
-            text-align: center;
-        }
-        .menu a:hover { transform: scale(1.05); background: rgba(255,255,255,0.2); }
-        .menu .emoji { font-size: 3rem; }
-        footer { margin-top: auto; padding: 20px; opacity: 0.6; font-size: 0.9rem; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Kubik Site</title>
+
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <h1>🛠️ Мой сайт-комбайн</h1>
-    <p>Здесь собраны все мои инструменты и игры</p>
-    <div class="menu">
-        <a href="games.html"><span class="emoji">🎮</span>Игры</a>
-        <a href="tools.html"><span class="emoji">🧮</span>Инструменты</a>
-        <a href="aichat.html"><span class="emoji">🤖</span>AI-чат</a>
-        <a href="drawing.html"><span class="emoji">🎨</span>Рисовалка</a>
-        <a href="todo.html"><span class="emoji">📝</span>Заметки</a>
-        <a href="password.html"><span class="emoji">🔐</span>Пароли</a>
-        <a href="weather.html"><span class="emoji">🌤️</span>Погода</a>
-    </div>
-    <footer>Сделано на телефоне сделал Кубик и отдел 💪</footer>
+
+<div class="background"></div>
+
+<header>
+
+<h1>🔥 KUBIK PORTAL 🔥</h1>
+
+<nav>
+<a href="pages/games.html">🎮 Игры</a>
+<a href="pages/tools.html">🛠 Инструменты</a>
+<a href="pages/profile.html">👤 Профиль</a>
+<a href="pages/news.html">📰 Новости</a>
+</nav>
+
+</header>
+
+<section class="hero">
+
+<h2>Добро пожаловать</h2>
+
+<p>
+Мой портал с играми, AI, инструментами и крутыми проектами 🚀
+</p>
+
+<button onclick="toggleTheme()">
+🌙 Сменить тему
+</button>
+
+</section>
+
+<section class="cards">
+
+<div class="card">
+<h3>🎮 Игры</h3>
+<p>Ферма, змейка, кликеры и многое другое</p>
+</div>
+
+<div class="card">
+<h3>🤖 AI</h3>
+<p>Умный AI чат прямо на сайте</p>
+</div>
+
+<div class="card">
+<h3>🛠 Инструменты</h3>
+<p>Заметки, погода, пароли, рисовалка</p>
+</div>
+
+<div class="card">
+<h3>🏆 Система уровней</h3>
+<p>Получай опыт и достижения</p>
+</div>
+
+</section>
+
+<footer>
+© 2026 Kubik Portal
+</footer>
+
+<script src="script.js"></script>
+
 </body>
 </html>
