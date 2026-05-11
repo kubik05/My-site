@@ -1,96 +1,239 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My App</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My App OS</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0f0f0f;
+  color: white;
+  overflow: hidden;
+}
 
-    nav {
-      display: flex;
-      gap: 10px;
-      padding: 10px;
-      background: #222;
-    }
+/* ===== APP LAYOUT ===== */
+.app {
+  display: flex;
+  height: 100vh;
+}
 
-    nav button {
-      color: white;
-      background: #444;
-      border: none;
-      padding: 10px;
-      cursor: pointer;
-    }
+/* ===== SIDEBAR (ANDROID STYLE) ===== */
+.sidebar {
+  width: 70px;
+  background: #181818;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+}
 
-    nav button:hover {
-      background: #666;
-    }
+.sidebar button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  padding: 14px;
+  cursor: pointer;
+}
 
-    .screen {
-      display: none;
-      padding: 20px;
-    }
+.sidebar button:hover {
+  background: #333;
+  border-radius: 12px;
+}
 
-    .screen.active {
-      display: block;
-    }
-  </style>
+/* ===== CONTENT ===== */
+.content {
+  flex: 1;
+  position: relative;
+}
+
+/* ===== SCREENS (LIKE APPS) ===== */
+.screen {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: 0.25s ease;
+  pointer-events: none;
+}
+
+.screen.active {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+/* ===== CARD UI ===== */
+.card {
+  background: #1f1f1f;
+  padding: 15px;
+  border-radius: 14px;
+  margin-top: 10px;
+}
+
+/* ===== INPUTS ===== */
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background: #111;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 10px;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px;
+  background: #333;
+  border: none;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+</style>
 </head>
 
 <body>
 
-  <!-- НАВИГАЦИЯ -->
-  <nav>
-    <button onclick="show('home')">Home</button>
-    <button onclick="show('games')">Games</button>
-    <button onclick="show('tools')">Tools</button>
-    <button onclick="show('profile')">Profile</button>
-  </nav>
+<div class="app">
 
-  <!-- ЭКРАНЫ -->
-  <div id="home" class="screen active">
-    <h1>🏠 Home</h1>
-    <p>Главная страница</p>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <button onclick="show('home')">🏠</button>
+    <button onclick="show('games')">🎮</button>
+    <button onclick="show('tools')">🌦</button>
+    <button onclick="show('chat')">💬</button>
+    <button onclick="show('profile')">👤</button>
   </div>
 
-  <div id="games" class="screen">
-    <h1>🎮 Games</h1>
-    <p>Раздел игр</p>
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- HOME -->
+    <div id="home" class="screen active">
+      <h1>Home</h1>
+      <div class="card">Добро пожаловать в My App OS</div>
+    </div>
+
+    <!-- GAMES -->
+    <div id="games" class="screen">
+      <h1>Games</h1>
+      <div class="card">Игры будут здесь</div>
+    </div>
+
+    <!-- WEATHER -->
+    <div id="tools" class="screen">
+      <h1>Weather</h1>
+
+      <div class="card">
+        <p>Frankfurt</p>
+        <p id="weather">Загрузка...</p>
+      </div>
+    </div>
+
+    <!-- CHAT -->
+    <div id="chat" class="screen">
+      <h1>Chat</h1>
+
+      <div class="card">
+        <div id="chatBox"></div>
+
+        <input id="msg" placeholder="Напиши сообщение...">
+        <button onclick="send()">Отправить</button>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div id="profile" class="screen">
+      <h1>Profile</h1>
+
+      <div class="card">
+        <input id="name" placeholder="Введите имя">
+        <button onclick="saveName()">Сохранить</button>
+
+        <p id="user"></p>
+      </div>
+    </div>
+
   </div>
+</div>
 
-  <div id="tools" class="screen">
-    <h1>🛠 Tools</h1>
-    <p>Раздел инструментов</p>
-  </div>
+<script>
 
-  <div id="profile" class="screen">
-    <h1>👤 Profile</h1>
-    <p>Твой профиль</p>
-  </div>
+/* ===== ROUTER ===== */
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+  });
 
-  <!-- JS ЛОГИКА -->
-  <script>
-    function show(id) {
-      document.querySelectorAll('.screen').forEach(s => {
-        s.classList.remove('active');
-      });
+  document.getElementById(id).classList.add('active');
+  location.hash = id;
+}
 
-      document.getElementById(id).classList.add('active');
+window.addEventListener('load', () => {
+  const page = location.hash.replace('#', '') || 'home';
+  show(page);
 
-      // сохраняем состояние в URL
-      location.hash = id;
-    }
+  loadWeather();
+  loadChat();
+  loadProfile();
+});
 
-    // запуск при загрузке
-    window.addEventListener('load', () => {
-      const page = location.hash.replace('#', '') || 'home';
-      show(page);
-    });
-  </script>
+/* ===== WEATHER (REAL API WITHOUT KEY) ===== */
+async function loadWeather() {
+  const el = document.getElementById("weather");
+
+  try {
+    const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=50.11&longitude=8.68&current_weather=true");
+    const data = await res.json();
+
+    el.innerText = `Температура: ${data.current_weather.temperature}°C`;
+  } catch {
+    el.innerText = "Ошибка загрузки погоды";
+  }
+}
+
+/* ===== CHAT (LOCAL STORAGE) ===== */
+function send() {
+  const msg = document.getElementById("msg");
+  const box = document.getElementById("chatBox");
+
+  if (!msg.value) return;
+
+  const messages = JSON.parse(localStorage.getItem("chat") || "[]");
+  messages.push(msg.value);
+  localStorage.setItem("chat", JSON.stringify(messages));
+
+  msg.value = "";
+  loadChat();
+}
+
+function loadChat() {
+  const box = document.getElementById("chatBox");
+  const messages = JSON.parse(localStorage.getItem("chat") || "[]");
+
+  box.innerHTML = messages.map(m => `<div>💬 ${m}</div>`).join("");
+}
+
+/* ===== PROFILE (SAVE NAME) ===== */
+function saveName() {
+  const name = document.getElementById("name").value;
+  localStorage.setItem("name", name);
+  loadProfile();
+}
+
+function loadProfile() {
+  const name = localStorage.getItem("name") || "Guest";
+  document.getElementById("user").innerText = "Имя: " + name;
+}
+
+</script>
 
 </body>
 </html>
