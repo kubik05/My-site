@@ -1,13 +1,44 @@
 const WORLD_SIZE = 40;
 
+/* ======================
+   WORLD MAP
+====================== */
+
 let world = [];
 
-for(let y=0;y<WORLD_SIZE;y++){
-  let row=[];
-  for(let x=0;x<WORLD_SIZE;x++){
+for(let y = 0; y < WORLD_SIZE; y++){
+  let row = [];
+
+  for(let x = 0; x < WORLD_SIZE; x++){
+
     row.push({
-      type: "grass"
+      type: "grass",   // пока вся карта — трава
+      grow: 0,         // будущий рост растений
+      object: null     // будущие объекты (дом, дерево и т.д.)
     });
+
   }
+
   world.push(row);
 }
+
+/* ======================
+   PLAYER
+====================== */
+
+let player = {
+  x: 20,          // старт по центру
+  y: 20,
+  emoji: "🧑‍🌾",
+  speed: 1
+};
+
+/* ======================
+   FUTURE HOOKS (НЕ ТРОГАТЬ ПОКА)
+====================== */
+
+// сюда позже добавим:
+// - растения
+// - здания
+// - животных
+// - шахту
