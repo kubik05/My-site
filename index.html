@@ -11,6 +11,7 @@ body{
   font-family:Arial;
   background:#0b0b12;
   color:white;
+  overflow:hidden;
 }
 
 /* HOME */
@@ -19,6 +20,7 @@ body{
   grid-template-columns:repeat(3,1fr);
   gap:12px;
   padding:15px;
+  transition:0.3s;
 }
 
 .icon{
@@ -31,44 +33,70 @@ body{
   user-select:none;
 }
 
-/* APP */
-#app{
+/* BLUR */
+.blur{
+  filter:blur(6px);
+  transform:scale(0.98);
+}
+
+/* WINDOWS */
+.window{
   position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:#0f0f18;
-  display:none;
-  flex-direction:column;
-}
-
-.topbar{
-  height:50px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 10px;
-  background:rgba(255,255,255,0.08);
-}
-
-.back{
-  background:none;
-  border:none;
-  color:white;
-  font-size:18px;
-}
-
-.content{
-  flex:1;
+  top:60px;
+  left:10px;
+  right:10px;
+  bottom:80px;
+  background:#111827;
+  border-radius:16px;
   overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);
+  animation:pop .2s ease;
 }
 
-/* iframe */
-iframe{
-  width:100%;
-  height:100%;
-  border:none;
+@keyframes pop{
+  from{transform:scale(0.9);opacity:0;}
+  to{transform:scale(1);opacity:1;}
+}
+
+.winbar{
+  height:40px;
+  background:rgba(255,255,255,0.08);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 10px;
+}
+
+.wincontent{
+  flex:1;
+  overflow:auto;
+}
+
+/* DOCK */
+#dock{
+  position:fixed;
+  bottom:10px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,0.08);
+  padding:10px 20px;
+  border-radius:20px;
+  display:flex;
+  gap:20px;
+}
+
+/* NOTIF */
+#notif{
+  position:fixed;
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,0.7);
+  padding:10px 20px;
+  border-radius:12px;
+  display:none;
 }
 </style>
 
@@ -87,33 +115,68 @@ iframe{
 
 </div>
 
-<!-- APP -->
-<div id="app">
-  <div class="topbar">
-    <button class="back" onclick="closeApp()">←</button>
-    <span id="title">App</span>
-    <div></div>
-  </div>
-
-  <div class="content" id="content"></div>
+<!-- DOCK -->
+<div id="dock">
+  <div onclick="openChat()">💬</div>
+  <div onclick="openFarm()">🌾</div>
+  <div onclick="openGames()">🎮</div>
 </div>
+
+<!-- NOTIF -->
+<div id="notif"></div>
 
 <script>
 
-/* OPEN / CLOSE */
+/* =====================
+   MULTI WINDOW SYSTEM
+===================== */
+
+let apps = {};
+let zIndex = 10;
+
 function openApp(title, html){
-  document.getElementById("home").style.display="none";
-  document.getElementById("app").style.display="flex";
-  document.getElementById("title").innerText=title;
-  document.getElementById("content").innerHTML=html;
+
+  let id = "app_" + Date.now();
+
+  let win = document.createElement("div");
+  win.className = "window";
+  win.style.zIndex = zIndex++;
+
+  win.innerHTML = `
+    <div class="winbar">
+      <span>${title}</span>
+      <button onclick="closeWin('${id}')">✕</button>
+    </div>
+    <div class="wincontent">${html}</div>
+  `;
+
+  win.id = id;
+
+  document.body.appendChild(win);
+
+  apps[id] = win;
+
+  document.getElementById("home").classList.add("blur");
+
 }
 
-function closeApp(){
-  document.getElementById("home").style.display="grid";
-  document.getElementById("app").style.display="none";
+function closeWin(id){
+
+  if(apps[id]){
+    apps[id].remove();
+    delete apps[id];
+  }
+
+  if(Object.keys(apps).length === 0){
+    document.getElementById("home").classList.remove("blur");
+  }
+
 }
 
-/* APPS */
+/* =====================
+   APPS
+===================== */
+
 function openChat(){
   openApp("💬 Чат", `<input style="width:100%;padding:10px"><button>Отправить</button>`);
 }
@@ -130,13 +193,57 @@ function openGames(){
   openApp("🎮 Игры", `<p>Игры скоро будут</p>`);
 }
 
-/* ====== 🚀 ФЕРМА (ИСПРАВЛЕНО) ====== */
+/* =====================
+   FARM (FIXED PATH)
+===================== */
 
 function openFarm(){
-
   openApp("🌾 Ферма", `
     <iframe src="farm-game/index.html"></iframe>
   `);
+}
+
+/* =====================
+   NOTIFICATION
+===================== */
+
+function notify(text){
+
+  let n=document.getElementById("notif");
+  n.innerText=text;
+  n.style.display="block";
+
+  setTimeout(()=>n.style.display="none",2000);
+
+}
+
+/* =====================
+   SWIPE (IOS STYLE)
+===================== */
+
+let startY=0;
+
+document.addEventListener("touchstart",e=>{
+  startY=e.touches[0].clientY;
+});
+
+document.addEventListener("touchend",e=>{
+  let endY=e.changedTouches[0].clientY;
+
+  if(startY - endY > 80){
+    minimizeAll();
+  }
+});
+
+function minimizeAll(){
+
+  for(let id in apps){
+    apps[id].remove();
+  }
+
+  apps={};
+
+  document.getElementById("home").classList.remove("blur");
 
 }
 
