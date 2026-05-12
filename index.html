@@ -20,7 +20,6 @@ body{
   grid-template-columns:repeat(3,1fr);
   gap:12px;
   padding:15px;
-  transition:0.3s;
 }
 
 .icon{
@@ -28,50 +27,13 @@ body{
   border-radius:18px;
   padding:20px 10px;
   text-align:center;
-  font-size:14px;
   cursor:pointer;
-  user-select:none;
 }
 
 /* BLUR */
 .blur{
   filter:blur(6px);
   transform:scale(0.98);
-}
-
-/* WINDOWS */
-.window{
-  position:fixed;
-  top:60px;
-  left:10px;
-  right:10px;
-  bottom:80px;
-  background:#111827;
-  border-radius:16px;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  box-shadow:0 10px 30px rgba(0,0,0,0.5);
-  animation:pop .2s ease;
-}
-
-@keyframes pop{
-  from{transform:scale(0.9);opacity:0;}
-  to{transform:scale(1);opacity:1;}
-}
-
-.winbar{
-  height:40px;
-  background:rgba(255,255,255,0.08);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:0 10px;
-}
-
-.wincontent{
-  flex:1;
-  overflow:auto;
 }
 
 /* DOCK */
@@ -97,6 +59,33 @@ body{
   padding:10px 20px;
   border-radius:12px;
   display:none;
+  z-index:99999;
+}
+
+/* ===== FULLSCREEN FARM ===== */
+#farmFull{
+  position:fixed;
+  inset:0;
+  background:#000;
+  display:flex;
+  flex-direction:column;
+  z-index:9999;
+}
+
+#farmTop{
+  height:50px;
+  background:#111;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 10px;
+  color:white;
+}
+
+#farmFull iframe{
+  flex:1;
+  width:100%;
+  border:none;
 }
 </style>
 
@@ -128,79 +117,49 @@ body{
 <script>
 
 /* =====================
-   MULTI WINDOW SYSTEM
-===================== */
-
-let apps = {};
-let zIndex = 10;
-
-function openApp(title, html){
-
-  let id = "app_" + Date.now();
-
-  let win = document.createElement("div");
-  win.className = "window";
-  win.style.zIndex = zIndex++;
-
-  win.innerHTML = `
-    <div class="winbar">
-      <span>${title}</span>
-      <button onclick="closeWin('${id}')">✕</button>
-    </div>
-    <div class="wincontent">${html}</div>
-  `;
-
-  win.id = id;
-
-  document.body.appendChild(win);
-
-  apps[id] = win;
-
-  document.getElementById("home").classList.add("blur");
-
-}
-
-function closeWin(id){
-
-  if(apps[id]){
-    apps[id].remove();
-    delete apps[id];
-  }
-
-  if(Object.keys(apps).length === 0){
-    document.getElementById("home").classList.remove("blur");
-  }
-
-}
-
-/* =====================
    APPS
 ===================== */
 
 function openChat(){
-  openApp("💬 Чат", `<input style="width:100%;padding:10px"><button>Отправить</button>`);
+  alert("чат");
 }
 
 function openNotes(){
-  openApp("📝 Заметки", `<textarea style="width:100%;height:300px"></textarea>`);
+  alert("notes");
 }
 
 function openGallery(){
-  openApp("📷 Галерея", `<input type="file">`);
+  alert("gallery");
 }
 
 function openGames(){
-  openApp("🎮 Игры", `<p>Игры скоро будут</p>`);
+  alert("games");
 }
 
 /* =====================
-   FARM (FIXED PATH)
+   🚀 FULLSCREEN FARM FIX
 ===================== */
 
 function openFarm(){
-  openApp("🌾 Ферма", `
-    <iframe src="farm-game/index.html"></iframe>
+
+  document.getElementById("home").classList.add("blur");
+
+  document.body.insertAdjacentHTML("beforeend",`
+    <div id="farmFull">
+      <div id="farmTop">
+        <button onclick="closeFarm()" style="font-size:20px;">←</button>
+        <span>🌾 Ферма</span>
+      </div>
+
+      <iframe src="farm-game/index.html"></iframe>
+    </div>
   `);
+
+}
+
+function closeFarm(){
+  document.getElementById("farmFull").remove();
+  document.getElementById("home").classList.remove("blur");
 }
 
 /* =====================
@@ -214,36 +173,6 @@ function notify(text){
   n.style.display="block";
 
   setTimeout(()=>n.style.display="none",2000);
-
-}
-
-/* =====================
-   SWIPE (IOS STYLE)
-===================== */
-
-let startY=0;
-
-document.addEventListener("touchstart",e=>{
-  startY=e.touches[0].clientY;
-});
-
-document.addEventListener("touchend",e=>{
-  let endY=e.changedTouches[0].clientY;
-
-  if(startY - endY > 80){
-    minimizeAll();
-  }
-});
-
-function minimizeAll(){
-
-  for(let id in apps){
-    apps[id].remove();
-  }
-
-  apps={};
-
-  document.getElementById("home").classList.remove("blur");
 
 }
 
