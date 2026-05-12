@@ -10,24 +10,22 @@
 
 <div id="ui">
   💰 <span id="money">0</span> |
-  ⭐ <span id="level">1</span> |
-  📦 <span id="inv">0</span> |
-  🌦 <span id="weather">sun</span>
+  ⭐ <span id="level">1</span>
+</div>
+
+<!-- XP BAR -->
+<div id="xpContainer">
+  <div id="xpBar"></div>
 </div>
 
 <div id="menu">
   <button onclick="selectCrop('wheat')">🌾</button>
   <button onclick="selectCrop('carrot')">🥕</button>
   <button onclick="selectCrop('berry')">🍓</button>
-
-  <button onclick="openInventory()">📦</button>
-  <button onclick="openMarket()">🏪</button>
-  <button onclick="openQuests()">🎯</button>
 </div>
 
 <canvas id="game"></canvas>
 
-<script src="world.js"></script>
 <script src="camera.js"></script>
 <script src="economy.js"></script>
 <script src="inventory.js"></script>
