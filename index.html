@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>FULL OS + FARM PRO</title>
+<title>Web OS</title>
 
 <style>
 body{
@@ -29,7 +29,7 @@ body{
   cursor:pointer;
 }
 
-/* ===== WINDOW ===== */
+/* ===== WINDOW SYSTEM ===== */
 .window{
   position:fixed;
   top:50px;
@@ -55,24 +55,6 @@ body{
   padding:10px;
 }
 
-/* ===== FARM ===== */
-#grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:5px;
-  padding:10px;
-}
-
-.cell{
-  background:#1c3a2a;
-  height:80px;
-  border-radius:8px;
-  text-align:center;
-  font-size:12px;
-  position:relative;
-  overflow:hidden;
-}
-
 button{
   margin:3px;
   padding:8px;
@@ -80,23 +62,25 @@ button{
   border-radius:6px;
 }
 </style>
+
 </head>
 
 <body>
 
 <!-- ===== HOME ===== -->
 <div id="home">
-  <div class="icon" onclick="openFarm()">🌾<br>Ферма</div>
+
   <div class="icon" onclick="openChat()">💬<br>Чат</div>
   <div class="icon" onclick="openNotes()">📝<br>Заметки</div>
   <div class="icon" onclick="openGallery()">📷<br>Галерея</div>
   <div class="icon" onclick="openGames()">🎮<br>Игры</div>
+
 </div>
 
 <script>
 
 /* =========================
-   ОС ЯДРО
+   WINDOW CORE
 ========================= */
 
 let z=10;
@@ -122,19 +106,21 @@ function openWindow(html){
 ========================= */
 
 function openChat(){
-  let c=JSON.parse(localStorage.getItem("chat")||"[]");
 
-  openWindow(`
-    <h3>💬 Чат</h3>
-    <div id="chatBox"></div>
-    <input id="msg">
-    <button onclick="sendMsg()">Отправить</button>
-  `);
+let c=JSON.parse(localStorage.getItem("chat")||"[]");
 
-  setTimeout(()=>{
-    document.getElementById("chatBox").innerHTML=
-      c.map(x=>"💬 "+x).join("<br>");
-  },100);
+openWindow(`
+  <h3>💬 Чат</h3>
+  <div id="chatBox"></div>
+  <input id="msg">
+  <button onclick="sendMsg()">Отправить</button>
+`);
+
+setTimeout(()=>{
+  document.getElementById("chatBox").innerHTML=
+    c.map(x=>"💬 "+x).join("<br>");
+},100);
+
 }
 
 function sendMsg(){
@@ -149,13 +135,15 @@ function sendMsg(){
 ========================= */
 
 function openNotes(){
-  let n=localStorage.getItem("notes")||"";
 
-  openWindow(`
-    <h3>📝 Заметки</h3>
-    <textarea id="nt" style="width:100%;height:200px">${n}</textarea>
-    <button onclick="saveNotes()">Сохранить</button>
-  `);
+let n=localStorage.getItem("notes")||"";
+
+openWindow(`
+  <h3>📝 Заметки</h3>
+  <textarea id="nt" style="width:100%;height:200px">${n}</textarea>
+  <button onclick="saveNotes()">Сохранить</button>
+`);
+
 }
 
 function saveNotes(){
@@ -167,17 +155,19 @@ function saveNotes(){
 ========================= */
 
 function openGallery(){
-  openWindow(`
-    <h3>📷 Галерея</h3>
-    <input type="file" onchange="addImg(event)">
-    <div id="gal"></div>
-  `);
 
-  setTimeout(()=>{
-    let imgs=JSON.parse(localStorage.getItem("imgs")||"[]");
-    document.getElementById("gal").innerHTML=
-      imgs.map(i=>`<img src="${i}" style="width:100px">`).join("");
-  },100);
+openWindow(`
+  <h3>📷 Галерея</h3>
+  <input type="file" onchange="addImg(event)">
+  <div id="gal"></div>
+`);
+
+setTimeout(()=>{
+  let imgs=JSON.parse(localStorage.getItem("imgs")||"[]");
+  document.getElementById("gal").innerHTML=
+    imgs.map(i=>`<img src="${i}" style="width:100px;border-radius:10px">`).join("");
+},100);
+
 }
 
 function addImg(e){
@@ -191,21 +181,23 @@ function addImg(e){
 }
 
 /* =========================
-   GAMES
+   GAMES (NO FARM)
 ========================= */
 
 let score=0;
 
 function openGames(){
-  openWindow(`
-    <h3>🎮 Игры</h3>
 
-    <button onclick="tap()">Тап</button>
-    <div id="score">0</div>
+openWindow(`
+  <h3>🎮 Игры</h3>
 
-    <button onclick="snake()">Змейка</button>
-    <button onclick="memory()">Память</button>
-  `);
+  <button onclick="tap()">Тап игра</button>
+  <div id="score">0</div>
+
+  <button onclick="snake()">Змейка</button>
+  <button onclick="memory()">Память</button>
+`);
+
 }
 
 function tap(){
@@ -223,125 +215,11 @@ function tap(){
 }
 
 function snake(){
-  openWindow("🐍 Змейка (заготовка)");
+  openWindow("🐍 Змейка (будет доработана)");
 }
 
 function memory(){
-  openWindow("🧠 Память (заготовка)");
-}
-
-/* =========================
-   🌾 FARM PRO 100% RESTORE
-========================= */
-
-function openFarm(){
-
-openWindow(`
-<div id="top">
-🌾 Уровень: <span id="lvl">1</span> |
-💰 <span id="money">100</span> |
-📦 Рынок живой
-</div>
-
-<div id="panel"></div>
-<div id="market"></div>
-<div id="grid"></div>
-`);
-
-setTimeout(farmInit,100);
-
-}
-
-function farmInit(){
-
-let level=1;
-let money=100;
-let cells=[];
-
-/* ===== GOODS (100% ORIGINAL) ===== */
-
-let goods={
-  Пшеница:{base:10,demand:1},
-  Морковь:{base:12,demand:1},
-  Лук:{base:15,demand:1},
-  Капуста:{base:18,demand:1},
-  Клубника:{base:25,demand:1.2},
-  Арбуз:{base:40,demand:1.5}
-};
-
-/* ===== GRID ===== */
-
-let g=document.getElementById("grid");
-
-for(let i=0;i<12;i++){
-  let d=document.createElement("div");
-  d.className="cell";
-  d.onclick=()=>grow(i);
-  g.appendChild(d);
-  cells[i]={t:0};
-}
-
-/* ===== GROW (UNCHANGED LOGIC) ===== */
-
-function grow(i){
-
-let c=cells[i];
-if(c.t>0) return;
-
-c.t=5+Math.random()*5;
-
-let el=document.getElementsByClassName("cell")[i];
-
-let int=setInterval(()=>{
-
-  c.t--;
-
-  el.innerHTML="🌱";
-
-  if(c.t<=0){
-    clearInterval(int);
-    el.innerHTML="✔ готово";
-    el.onclick=()=>harvest(i);
-  }
-
-},1000);
-
-}
-
-/* ===== HARVEST (UNCHANGED LOGIC) ===== */
-
-function harvest(i){
-
-let items=Object.keys(goods);
-let item=items[Math.floor(Math.random()*items.length)];
-
-let price=goods[item].base*goods[item].demand;
-
-money+=price;
-
-document.getElementById("money").innerText=Math.floor(money);
-
-cells[i]={t:0};
-
-let el=document.getElementsByClassName("cell")[i];
-el.innerHTML="";
-el.onclick=()=>grow(i);
-
-}
-
-/* ===== LIVE MARKET ===== */
-
-setInterval(()=>{
-
-for(let k in goods){
-  goods[k].demand+=Math.random()*0.4-0.2;
-
-  if(goods[k].demand<0.5) goods[k].demand=0.5;
-  if(goods[k].demand>2) goods[k].demand=2;
-}
-
-},5000);
-
+  openWindow("🧠 Память (будет доработана)");
 }
 
 </script>
