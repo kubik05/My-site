@@ -1,32 +1,71 @@
-const SIZE = 40;
+// ======================
+// CAMERA
+// ======================
 
-let world = Array.from({length:SIZE},()=> 
-  Array.from({length:SIZE},()=>({type:"grass"}))
-);
+let camera = {
+  x:0,
+  y:100,
+  zoom:1
+};
 
-let player = {x:20,y:20};
+// ======================
+// PLAYER
+// ======================
+
+let player = {
+  x:0,
+  y:0
+};
+
+// ======================
+// GAME DATA
+// ======================
 
 let game = {
-  money:100,
+
+  money:500,
+
   level:1,
+
   xp:0,
-  xpNeed:50,
-  inventory:{},
+
+  xpNeed:100,
+
   unlockedCrops:["wheat"]
+
 };
 
-let planted = [];
-let selected = "wheat";
-let weather = "sun";
-
-let npcs = [
-  {name:"Tom", wants:"wheat", price:15},
-  {name:"Anna", wants:"carrot", price:25},
-  {name:"Bob", wants:"berry", price:40}
-];
+// ======================
+// CROPS
+// ======================
 
 let crops = {
-  wheat:{time:3,price:10,emoji:"🌾"},
-  carrot:{time:5,price:15,emoji:"🥕"},
-  berry:{time:6,price:25,emoji:"🍓"}
+
+  wheat:{
+    emoji:"🌾",
+    time:5
+  },
+
+  carrot:{
+    emoji:"🥕",
+    time:8
+  },
+
+  berry:{
+    emoji:"🍓",
+    time:12
+  }
+
 };
+
+// ======================
+// PLANTED
+// ======================
+
+let planted = [];
+
+// ======================
+// SELECTED
+// ======================
+
+let selected = "wheat";
