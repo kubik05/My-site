@@ -1,135 +1,86 @@
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+const c=document.getElementById("game");
+const ctx=c.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-/* ======================
-   CAMERA
-====================== */
-
-let camera = {
-  x: 0,
-  y: 0
-};
-
-/* ======================
-   ISO
-====================== */
-
-const tileW = 64;
-const tileH = 32;
+c.width=innerWidth;
+c.height=innerHeight;
 
 function iso(x,y){
   return {
-    x:(x - y) * tileW/2 + canvas.width/2 + camera.x,
-    y:(x + y) * tileH/2 + camera.y
+    x:((x-y)*32)*camera.zoom + c.width/2 + camera.x,
+    y:((x+y)*16)*camera.zoom + camera.y
   };
 }
 
-/* ======================
-   DRAW WORLD
-====================== */
-
 function draw(){
 
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.clearRect(0,0,c.width,c.height);
 
-  for(let y=0;y<world.length;y++){
-    for(let x=0;x<world[y].length;x++){
+  for(let y=0;y<SIZE;y++){
+    for(let x=0;x<SIZE;x++){
 
-      let pos = iso(x,y);
+      let p=iso(x,y);
 
-      ctx.fillStyle = "#2f6b3f";
+      ctx.fillStyle="#2f6b3f";
 
       ctx.beginPath();
-      ctx.moveTo(pos.x, pos.y);
-      ctx.lineTo(pos.x + tileW/2, pos.y + tileH/2);
-      ctx.lineTo(pos.x, pos.y + tileH);
-      ctx.lineTo(pos.x - tileW/2, pos.y + tileH/2);
+      ctx.moveTo(p.x,p.y);
+      ctx.lineTo(p.x+32,p.y+16);
+      ctx.lineTo(p.x,p.y+32);
+      ctx.lineTo(p.x-32,p.y+16);
       ctx.closePath();
       ctx.fill();
-
-      /* ======================
-         GRID LINE (optional)
-      ====================== */
-
-      ctx.strokeStyle="rgba(0,0,0,0.1)";
-      ctx.stroke();
 
     }
   }
 
+  drawCrops();
   drawPlayer();
+  updateUI();
 }
-
-/* ======================
-   PLAYER DRAW
-====================== */
 
 function drawPlayer(){
-
-  let pos = iso(player.x, player.y);
-
-  ctx.font="24px Arial";
-  ctx.textAlign="center";
-
-  ctx.fillText(player.emoji, pos.x, pos.y);
+  let p=iso(player.x,player.y);
+  ctx.fillText("🧑‍🌾",p.x,p.y);
 }
 
-/* ======================
-   MOVE PLAYER
-====================== */
+function drawCrops(){
 
-function movePlayer(x,y){
+  planted.forEach(p=>{
 
-  let nx = player.x + x;
-  let ny = player.y + y;
+    let pos=iso(p.x,p.y);
 
-  if(nx<0||ny<0||nx>=40||ny>=40) return;
+    let prog = 1 - (p.t/crops[p.type].time);
 
-  player.x = nx;
-  player.y = ny;
+    let e="🌱";
+    if(prog>0.4)e="🌿";
+    if(prog>0.8)e=crops[p.type].emoji;
+
+    ctx.fillText(e,pos.x,pos.y);
+
+    p.t -= 0.01;
+
+    if(p.t<=0){
+      addItem(p.type);
+      soundHarvest();
+      p.t=-999;
+    }
+
+  });
+
 }
 
-/* ======================
-   CONTROLS (KEYBOARD)
-====================== */
+function updateUI(){
+  money.innerText=game.money;
+  level.innerText=game.level;
+  inv.innerText=Object.keys(game.inventory).length;
+}
 
-document.addEventListener("keydown",(e)=>{
+c.onclick=e=>{
+  let x=Math.floor((e.clientX-c.width/2)/32);
+  let y=Math.floor((e.clientY)/32);
 
-  if(e.key==="w") movePlayer(0,-1);
-  if(e.key==="s") movePlayer(0,1);
-  if(e.key==="a") movePlayer(-1,0);
-  if(e.key==="d") movePlayer(1,0);
-
-});
-
-/* ======================
-   TOUCH MOVE (tap tile)
-====================== */
-
-canvas.addEventListener("click",(e)=>{
-
-  let rect = canvas.getBoundingClientRect();
-
-  let mx = e.clientX - rect.left;
-  let my = e.clientY - rect.top;
-
-  // простое приближение к сетке
-  let tx = Math.floor((mx - canvas.width/2)/32 + (my/32));
-  let ty = Math.floor((my/32) - (mx - canvas.width/2)/32);
-
-  if(tx>=0 && ty>=0 && tx<40 && ty<40){
-    player.x = tx;
-    player.y = ty;
-  }
-
-});
-
-/* ======================
-   LOOP
-====================== */
+  planted.push({x,y,type:selected,t:crops[selected].time});
+};
 
 function loop(){
   draw();
@@ -138,11 +89,6 @@ function loop(){
 
 loop();
 
-/* ======================
-   RESIZE
-====================== */
-
-window.addEventListener("resize",()=>{
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
+function show(t){
+  alert(t);
+}
