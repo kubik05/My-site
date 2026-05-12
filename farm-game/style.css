@@ -18,6 +18,25 @@ canvas{
   padding:8px;
 }
 
+/* XP BAR */
+#xpContainer{
+  position:fixed;
+  top:40px;
+  left:10px;
+  width:200px;
+  height:10px;
+  background:#333;
+  border-radius:10px;
+}
+
+#xpBar{
+  height:100%;
+  width:0%;
+  background:lime;
+  border-radius:10px;
+  transition:0.3s;
+}
+
 #menu{
   position:fixed;
   bottom:0;
@@ -25,11 +44,4 @@ canvas{
   display:flex;
   justify-content:space-around;
   background:rgba(0,0,0,0.6);
-  padding:10px;
-}
-
-button{
-  padding:10px;
-  border-radius:10px;
-  border:none;
 }
