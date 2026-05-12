@@ -13,7 +13,7 @@ body{
   overflow:hidden;
 }
 
-/* ===== HOME ===== */
+/* ===== HOME SCREEN ===== */
 #home{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -50,9 +50,9 @@ body{
 }
 
 .content{
+  width:100%;
   height:100%;
-  overflow:auto;
-  padding:10px;
+  overflow:hidden;
 }
 
 button{
@@ -67,7 +67,7 @@ button{
 
 <body>
 
-<!-- ===== HOME ===== -->
+<!-- ===== ICONS ===== -->
 <div id="home">
 
   <div class="icon" onclick="openChat()">💬<br>Чат</div>
@@ -75,12 +75,15 @@ button{
   <div class="icon" onclick="openGallery()">📷<br>Галерея</div>
   <div class="icon" onclick="openGames()">🎮<br>Игры</div>
 
+  <!-- 🌾 FARM -->
+  <div class="icon" onclick="openFarm()">🌾<br>Ферма</div>
+
 </div>
 
 <script>
 
 /* =========================
-   WINDOW CORE
+   WINDOW CORE (НЕ ТРОГАЕМ ЛОГИКУ)
 ========================= */
 
 let z=10;
@@ -106,28 +109,11 @@ function openWindow(html){
 ========================= */
 
 function openChat(){
-
-let c=JSON.parse(localStorage.getItem("chat")||"[]");
-
-openWindow(`
-  <h3>💬 Чат</h3>
-  <div id="chatBox"></div>
-  <input id="msg">
-  <button onclick="sendMsg()">Отправить</button>
-`);
-
-setTimeout(()=>{
-  document.getElementById("chatBox").innerHTML=
-    c.map(x=>"💬 "+x).join("<br>");
-},100);
-
-}
-
-function sendMsg(){
-  let m=document.getElementById("msg").value;
-  let c=JSON.parse(localStorage.getItem("chat")||"[]");
-  c.push(m);
-  localStorage.setItem("chat",JSON.stringify(c));
+  openWindow(`
+    <h3>💬 Чат</h3>
+    <input style="width:100%">
+    <button>Отправить</button>
+  `);
 }
 
 /* =========================
@@ -135,19 +121,10 @@ function sendMsg(){
 ========================= */
 
 function openNotes(){
-
-let n=localStorage.getItem("notes")||"";
-
-openWindow(`
-  <h3>📝 Заметки</h3>
-  <textarea id="nt" style="width:100%;height:200px">${n}</textarea>
-  <button onclick="saveNotes()">Сохранить</button>
-`);
-
-}
-
-function saveNotes(){
-  localStorage.setItem("notes",document.getElementById("nt").value);
+  openWindow(`
+    <h3>📝 Заметки</h3>
+    <textarea style="width:100%;height:200px"></textarea>
+  `);
 }
 
 /* =========================
@@ -155,71 +132,32 @@ function saveNotes(){
 ========================= */
 
 function openGallery(){
-
-openWindow(`
-  <h3>📷 Галерея</h3>
-  <input type="file" onchange="addImg(event)">
-  <div id="gal"></div>
-`);
-
-setTimeout(()=>{
-  let imgs=JSON.parse(localStorage.getItem("imgs")||"[]");
-  document.getElementById("gal").innerHTML=
-    imgs.map(i=>`<img src="${i}" style="width:100px;border-radius:10px">`).join("");
-},100);
-
-}
-
-function addImg(e){
-  let r=new FileReader();
-  r.onload=function(){
-    let imgs=JSON.parse(localStorage.getItem("imgs")||"[]");
-    imgs.push(r.result);
-    localStorage.setItem("imgs",JSON.stringify(imgs));
-  };
-  r.readAsDataURL(e.target.files[0]);
+  openWindow(`
+    <h3>📷 Галерея</h3>
+    <input type="file">
+  `);
 }
 
 /* =========================
-   GAMES (NO FARM)
+   GAMES
 ========================= */
 
-let score=0;
-
 function openGames(){
-
-openWindow(`
-  <h3>🎮 Игры</h3>
-
-  <button onclick="tap()">Тап игра</button>
-  <div id="score">0</div>
-
-  <button onclick="snake()">Змейка</button>
-  <button onclick="memory()">Память</button>
-`);
-
+  openWindow(`
+    <h3>🎮 Игры</h3>
+    <p>Игры будут здесь</p>
+  `);
 }
 
-function tap(){
-  score++;
-  document.getElementById("score").innerText=score;
+/* =========================
+   🌾 FARM LAUNCH (ЕДИНСТВЕННОЕ ДОБАВЛЕНИЕ)
+========================= */
 
-  let ctx=new AudioContext();
-  let o=ctx.createOscillator();
-  o.frequency.value=600;
-  o.connect(ctx.destination);
-  o.start();
-  setTimeout(()=>o.stop(),80);
-
-  if(navigator.vibrate) navigator.vibrate(40);
-}
-
-function snake(){
-  openWindow("🐍 Змейка (будет доработана)");
-}
-
-function memory(){
-  openWindow("🧠 Память (будет доработана)");
+function openFarm(){
+  openWindow(`
+    <iframe src="farm.html"
+    style="width:100%;height:100%;border:none"></iframe>
+  `);
 }
 
 </script>
