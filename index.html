@@ -14,12 +14,13 @@ body{
   overflow:hidden;
 }
 
-/* HOME */
+/* HOME SCREEN */
 #home{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:12px;
   padding:15px;
+  transition:0.3s;
 }
 
 .icon{
@@ -28,9 +29,10 @@ body{
   padding:20px 10px;
   text-align:center;
   cursor:pointer;
+  user-select:none;
 }
 
-/* BLUR */
+/* blur effect */
 .blur{
   filter:blur(6px);
   transform:scale(0.98);
@@ -49,17 +51,17 @@ body{
   gap:20px;
 }
 
-/* NOTIF */
+/* NOTIFICATION */
 #notif{
   position:fixed;
   top:10px;
   left:50%;
   transform:translateX(-50%);
-  background:rgba(0,0,0,0.7);
+  background:rgba(0,0,0,0.8);
   padding:10px 20px;
   border-radius:12px;
   display:none;
-  z-index:99999;
+  z-index:9999;
 }
 
 /* ===== FULLSCREEN FARM ===== */
@@ -69,7 +71,7 @@ body{
   background:#000;
   display:flex;
   flex-direction:column;
-  z-index:9999;
+  z-index:99999;
 }
 
 #farmTop{
@@ -117,30 +119,32 @@ body{
 <script>
 
 /* =====================
-   APPS
+   APPS (простые заглушки)
 ===================== */
 
 function openChat(){
-  alert("чат");
+  notify("💬 Чат открыт");
 }
 
 function openNotes(){
-  alert("notes");
+  notify("📝 Заметки");
 }
 
 function openGallery(){
-  alert("gallery");
+  notify("📷 Галерея");
 }
 
 function openGames(){
-  alert("games");
+  notify("🎮 Игры");
 }
 
 /* =====================
-   🚀 FULLSCREEN FARM FIX
+   🚀 ФЕРМА (FIXED FULLSCREEN)
 ===================== */
 
 function openFarm(){
+
+  closeFarm(); // на всякий случай чистим старое
 
   document.getElementById("home").classList.add("blur");
 
@@ -158,12 +162,16 @@ function openFarm(){
 }
 
 function closeFarm(){
-  document.getElementById("farmFull").remove();
+
+  let f = document.getElementById("farmFull");
+  if(f) f.remove();
+
   document.getElementById("home").classList.remove("blur");
+
 }
 
 /* =====================
-   NOTIFICATION
+   NOTIFICATIONS
 ===================== */
 
 function notify(text){
@@ -172,9 +180,19 @@ function notify(text){
   n.innerText=text;
   n.style.display="block";
 
-  setTimeout(()=>n.style.display="none",2000);
+  setTimeout(()=>{
+    n.style.display="none";
+  },2000);
 
 }
+
+/* =====================
+   SAFETY CLEANUP
+===================== */
+
+window.onload = ()=>{
+  closeFarm(); // убирает любые остатки
+};
 
 </script>
 
