@@ -2,15 +2,18 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Farm Game PRO</title>
+
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<!-- UI -->
 <div id="ui">
-  💰 <span id="money">0</span> |
-  ⭐ <span id="level">1</span>
+  💰 <span id="money">500</span> |
+  ⭐ LVL <span id="level">1</span>
 </div>
 
 <!-- XP BAR -->
@@ -18,14 +21,18 @@
   <div id="xpBar"></div>
 </div>
 
+<!-- MENU -->
 <div id="menu">
   <button onclick="selectCrop('wheat')">🌾</button>
   <button onclick="selectCrop('carrot')">🥕</button>
   <button onclick="selectCrop('berry')">🍓</button>
 </div>
 
+<!-- GAME -->
 <canvas id="game"></canvas>
 
+<!-- SCRIPTS -->
+<script src="world.js"></script>
 <script src="camera.js"></script>
 <script src="economy.js"></script>
 <script src="inventory.js"></script>
@@ -33,6 +40,18 @@
 <script src="audio.js"></script>
 <script src="save.js"></script>
 <script src="game.js"></script>
+
+<script>
+
+/* ======================
+   SELECT CROP
+====================== */
+
+function selectCrop(name){
+  selected = name;
+}
+
+</script>
 
 </body>
 </html>
