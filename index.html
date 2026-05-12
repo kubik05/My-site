@@ -2,7 +2,8 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Web OS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Web OS</title>
 
 <style>
 body{
@@ -10,56 +11,64 @@ body{
   font-family:Arial;
   background:#0b0b12;
   color:white;
-  overflow:hidden;
 }
 
-/* ===== HOME SCREEN ===== */
+/* ===== PHONE HOME ===== */
 #home{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
   padding:15px;
 }
 
 .icon{
   background:rgba(255,255,255,0.08);
-  border-radius:15px;
-  padding:15px;
+  border-radius:18px;
+  padding:20px 10px;
   text-align:center;
+  font-size:14px;
   cursor:pointer;
+  user-select:none;
 }
 
-/* ===== WINDOW SYSTEM ===== */
-.window{
+/* ===== FULL APP SCREEN (mobile style) ===== */
+#app{
   position:fixed;
-  top:50px;
-  left:5%;
-  width:90%;
-  height:80%;
-  background:rgba(20,20,30,0.97);
-  border-radius:15px;
-  overflow:hidden;
-  z-index:10;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:#0f0f18;
+  display:none;
+  flex-direction:column;
 }
 
-.bar{
+.topbar{
+  height:50px;
   display:flex;
+  align-items:center;
   justify-content:space-between;
-  padding:8px;
-  background:rgba(255,255,255,0.1);
+  padding:0 10px;
+  background:rgba(255,255,255,0.08);
+}
+
+.back{
+  background:none;
+  border:none;
+  color:white;
+  font-size:18px;
 }
 
 .content{
-  width:100%;
-  height:100%;
-  overflow:hidden;
+  flex:1;
+  overflow:auto;
 }
 
-button{
-  margin:3px;
-  padding:8px;
+/* iframe full */
+iframe{
+  width:100%;
+  height:100%;
   border:none;
-  border-radius:6px;
 }
 </style>
 
@@ -67,96 +76,81 @@ button{
 
 <body>
 
-<!-- ===== ICONS ===== -->
+<!-- ===== HOME ===== -->
 <div id="home">
 
   <div class="icon" onclick="openChat()">💬<br>Чат</div>
   <div class="icon" onclick="openNotes()">📝<br>Заметки</div>
   <div class="icon" onclick="openGallery()">📷<br>Галерея</div>
   <div class="icon" onclick="openGames()">🎮<br>Игры</div>
-
-  <!-- 🌾 FARM -->
   <div class="icon" onclick="openFarm()">🌾<br>Ферма</div>
 
+</div>
+
+<!-- ===== APP SCREEN ===== -->
+<div id="app">
+  <div class="topbar">
+    <button class="back" onclick="closeApp()">←</button>
+    <span id="title">App</span>
+    <div></div>
+  </div>
+  <div class="content" id="content"></div>
 </div>
 
 <script>
 
 /* =========================
-   WINDOW CORE (НЕ ТРОГАЕМ ЛОГИКУ)
+   MOBILE NAVIGATION
 ========================= */
 
-let z=10;
+function openApp(title, html){
+  document.getElementById("home").style.display="none";
+  document.getElementById("app").style.display="flex";
+  document.getElementById("title").innerText=title;
+  document.getElementById("content").innerHTML=html;
+}
 
-function openWindow(html){
-  let w=document.createElement("div");
-  w.className="window";
-  w.style.zIndex=z++;
-
-  w.innerHTML=`
-    <div class="bar">
-      <button onclick="this.parentElement.parentElement.remove()">❌</button>
-      <span>APP</span>
-    </div>
-    <div class="content">${html}</div>
-  `;
-
-  document.body.appendChild(w);
+function closeApp(){
+  document.getElementById("home").style.display="grid";
+  document.getElementById("app").style.display="none";
 }
 
 /* =========================
-   CHAT
+   APPS
 ========================= */
 
 function openChat(){
-  openWindow(`
-    <h3>💬 Чат</h3>
-    <input style="width:100%">
+  openApp("💬 Чат", `
+    <input style="width:100%;padding:10px">
     <button>Отправить</button>
   `);
 }
 
-/* =========================
-   NOTES
-========================= */
-
 function openNotes(){
-  openWindow(`
-    <h3>📝 Заметки</h3>
-    <textarea style="width:100%;height:200px"></textarea>
+  openApp("📝 Заметки", `
+    <textarea style="width:100%;height:300px"></textarea>
   `);
 }
 
-/* =========================
-   GALLERY
-========================= */
-
 function openGallery(){
-  openWindow(`
-    <h3>📷 Галерея</h3>
+  openApp("📷 Галерея", `
     <input type="file">
   `);
 }
 
-/* =========================
-   GAMES
-========================= */
-
 function openGames(){
-  openWindow(`
-    <h3>🎮 Игры</h3>
-    <p>Игры будут здесь</p>
+  openApp("🎮 Игры", `
+    <p>Игры скоро будут</p>
   `);
 }
 
 /* =========================
-   🌾 FARM LAUNCH (ЕДИНСТВЕННОЕ ДОБАВЛЕНИЕ)
+   🌾 FARM (FULL SCREEN APP)
 ========================= */
 
 function openFarm(){
-  openWindow(`
-    <iframe src="farm.html"
-    style="width:100%;height:100%;border:none"></iframe>
+  openApp("🌾 Ферма", `
+    <iframe src="farm.html"></iframe>
   `);
 }
 
