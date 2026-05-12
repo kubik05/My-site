@@ -10,29 +10,20 @@ canvas.height = window.innerHeight;
 
 let camera = {
   x: 0,
-  y: 0,
-  zoom: 1
+  y: 0
 };
 
 /* ======================
-   ISO SETTINGS
+   ISO
 ====================== */
 
 const tileW = 64;
 const tileH = 32;
 
-/* ======================
-   DRAW TILE
-====================== */
-
 function iso(x,y){
-
-  let screenX = (x - y) * tileW/2;
-  let screenY = (x + y) * tileH/2;
-
   return {
-    x: screenX + canvas.width/2 + camera.x,
-    y: screenY + camera.y
+    x:(x - y) * tileW/2 + canvas.width/2 + camera.x,
+    y:(x + y) * tileH/2 + camera.y
   };
 }
 
@@ -59,10 +50,82 @@ function draw(){
       ctx.closePath();
       ctx.fill();
 
+      /* ======================
+         GRID LINE (optional)
+      ====================== */
+
+      ctx.strokeStyle="rgba(0,0,0,0.1)";
+      ctx.stroke();
+
     }
   }
 
+  drawPlayer();
 }
+
+/* ======================
+   PLAYER DRAW
+====================== */
+
+function drawPlayer(){
+
+  let pos = iso(player.x, player.y);
+
+  ctx.font="24px Arial";
+  ctx.textAlign="center";
+
+  ctx.fillText(player.emoji, pos.x, pos.y);
+}
+
+/* ======================
+   MOVE PLAYER
+====================== */
+
+function movePlayer(x,y){
+
+  let nx = player.x + x;
+  let ny = player.y + y;
+
+  if(nx<0||ny<0||nx>=40||ny>=40) return;
+
+  player.x = nx;
+  player.y = ny;
+}
+
+/* ======================
+   CONTROLS (KEYBOARD)
+====================== */
+
+document.addEventListener("keydown",(e)=>{
+
+  if(e.key==="w") movePlayer(0,-1);
+  if(e.key==="s") movePlayer(0,1);
+  if(e.key==="a") movePlayer(-1,0);
+  if(e.key==="d") movePlayer(1,0);
+
+});
+
+/* ======================
+   TOUCH MOVE (tap tile)
+====================== */
+
+canvas.addEventListener("click",(e)=>{
+
+  let rect = canvas.getBoundingClientRect();
+
+  let mx = e.clientX - rect.left;
+  let my = e.clientY - rect.top;
+
+  // простое приближение к сетке
+  let tx = Math.floor((mx - canvas.width/2)/32 + (my/32));
+  let ty = Math.floor((my/32) - (mx - canvas.width/2)/32);
+
+  if(tx>=0 && ty>=0 && tx<40 && ty<40){
+    player.x = tx;
+    player.y = ty;
+  }
+
+});
 
 /* ======================
    LOOP
@@ -76,44 +139,10 @@ function loop(){
 loop();
 
 /* ======================
-   CONTROL (DRAG CAMERA)
+   RESIZE
 ====================== */
 
-let drag=false;
-let lastX,lastY;
-
-canvas.addEventListener("mousedown",(e)=>{
-  drag=true;
-  lastX=e.clientX;
-  lastY=e.clientY;
-});
-
-canvas.addEventListener("mouseup",()=>drag=false);
-
-canvas.addEventListener("mousemove",(e)=>{
-
-  if(!drag) return;
-
-  camera.x += e.clientX - lastX;
-  camera.y += e.clientY - lastY;
-
-  lastX=e.clientX;
-  lastY=e.clientY;
-
-});
-
-/* ======================
-   MOBILE TOUCH
-====================== */
-
-canvas.addEventListener("touchmove",(e)=>{
-
-  let t=e.touches[0];
-
-  camera.x += t.clientX - (lastX||t.clientX);
-  camera.y += t.clientY - (lastY||t.clientY);
-
-  lastX=t.clientX;
-  lastY=t.clientY;
-
+window.addEventListener("resize",()=>{
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 });
