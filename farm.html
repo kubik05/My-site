@@ -2,19 +2,23 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Ферма PRO+</title>
+<title>Farm PRO FINAL</title>
 
 <style>
 body{
   margin:0;
   font-family:Arial;
+  background:#0e1a12;
   color:white;
-  transition:1s;
 }
 
 #top{
   padding:10px;
-  background:rgba(0,0,0,0.7);
+  background:#111;
+  font-size:12px;
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
 }
 
 #grid{
@@ -28,17 +32,21 @@ body{
   background:#1c3a2a;
   height:80px;
   border-radius:8px;
-  text-align:center;
-  position:relative;
-  font-size:12px;
-  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:0.2s;
 }
 
-.bar{
-  position:absolute;
-  bottom:0;
-  height:4px;
-  background:lime;
+.cell:active{
+  transform:scale(0.95);
+}
+
+.panel{
+  padding:10px;
+  background:#0b0b0b;
+  font-size:13px;
 }
 
 button{
@@ -47,212 +55,249 @@ button{
   border:none;
   border-radius:6px;
 }
-
-#panel{
-  padding:10px;
-  background:#111;
-}
-
-#market{
-  padding:10px;
-  display:none;
-  background:#111;
-}
 </style>
+
 </head>
 
 <body>
 
 <div id="top">
-🌾 Уровень: <span id="lvl">1</span> |
+🌾 Lvl: <span id="lvl">1</span> |
+⚡ Energy: <span id="energy">10</span> |
 💰 <span id="money">100</span> |
-📦 Рынок живой
+📦 Inv: <span id="inv">0</span> |
+🌍 <span id="market">stable</span>
 </div>
 
-<div id="panel"></div>
-<div id="market"></div>
+<div class="panel" id="quests"></div>
+<div class="panel" id="buildings"></div>
+
 <div id="grid"></div>
 
 <script>
 
-/* ===== ОСНОВА ===== */
+/* ======================
+   SAVE
+====================== */
 
-let level=1;
-let money=100;
-let cells=[];
+let save = JSON.parse(localStorage.getItem("farm_final")||"{}");
 
-/* ===== ТОВАРЫ ===== */
+let money = save.money ?? 100;
+let level = save.level ?? 1;
+let energy = save.energy ?? 10;
 
-let goods={
-  Пшеница:{base:10,demand:1},
-  Морковь:{base:12,demand:1},
-  Лук:{base:15,demand:1},
-  Капуста:{base:18,demand:1},
-  Клубника:{base:25,demand:1.2},
-  Арбуз:{base:40,demand:1.5}
+let inventory = save.inventory ?? 0;
+
+let barn = save.barn ?? 0;
+
+/* ======================
+   MARKET
+====================== */
+
+let market = {
+  wheat:10,
+  carrot:18,
+  berry:28,
+  melon:45
 };
 
-/* ===== СОЗДАНИЕ ПОЛЕЙ ===== */
+function marketUpdate(){
 
-function init(){
-  let g=document.getElementById("grid");
-
-  for(let i=0;i<12;i++){
-    let d=document.createElement("div");
-    d.className="cell";
-    d.onclick=()=>grow(i);
-    g.appendChild(d);
-    cells[i]={t:0};
+  for(let k in market){
+    market[k] += Math.random()*4 - 2;
+    if(market[k]<5) market[k]=5;
   }
 
-  panel();
-  setInterval(updateMarket,5000);
-  setInterval(randomEvents,8000);
+  let avg = Object.values(market).reduce((a,b)=>a+b)/4;
+
+  document.getElementById("market").innerText =
+    avg>30?"🔥 hot":avg<15?"❄️ cold":"stable";
 }
 
-init();
+setInterval(marketUpdate,4000);
 
-/* ===== ПАНЕЛЬ ===== */
+/* ======================
+   NPC SYSTEM
+====================== */
 
-function panel(){
-  document.getElementById("panel").innerHTML=`
-    <button onclick="openMarket()">📈 Рынок</button>
-  `;
+function npc(){
+  return 0.9 + Math.random()*0.4;
 }
 
-/* ===== РОСТ ===== */
+/* ======================
+   CROPS
+====================== */
 
-function grow(i){
+let crops = {
+  wheat:{time:3},
+  carrot:{time:5},
+  berry:{time:6},
+  melon:{time:8}
+};
+
+let selected="wheat";
+
+/* ======================
+   GRID
+====================== */
+
+let grid=document.getElementById("grid");
+let cells=[];
+
+for(let i=0;i<12;i++){
+  let d=document.createElement("div");
+  d.className="cell";
+  d.innerHTML="🌱";
+  d.onclick=()=>plant(i);
+  grid.appendChild(d);
+
+  cells[i]={crop:null,time:0,timer:null};
+}
+
+/* ======================
+   ENERGY
+====================== */
+
+setInterval(()=>{
+  if(energy<10+barn) energy++;
+},3000);
+
+/* ======================
+   PLANT
+====================== */
+
+function plant(i){
+
+  if(energy<=0) return;
+
   let c=cells[i];
-  if(c.t>0) return;
+  if(c.crop) return;
 
-  c.t=5+Math.random()*5;
+  c.crop=selected;
+  c.time=crops[selected].time;
+
+  energy--;
 
   let el=document.getElementsByClassName("cell")[i];
+  el.innerHTML="🌱";
 
-  let int=setInterval(()=>{
+  c.timer=setInterval(()=>{
 
-    c.t--;
+    c.time--;
 
-    el.innerHTML="🌱 растёт";
-
-    if(c.t<=0){
-      clearInterval(int);
-      el.innerHTML="✔ готово";
+    if(c.time<=0){
+      clearInterval(c.timer);
+      el.innerHTML="✔";
       el.onclick=()=>harvest(i);
     }
 
   },1000);
 }
 
-/* ===== СБОР ===== */
+/* ======================
+   HARVEST
+====================== */
 
 function harvest(i){
-  let items=Object.keys(goods);
-  let item=items[Math.floor(Math.random()*items.length)];
 
-  let gold=Math.random()<0.05;
-
-  let price=goods[item].base*goods[item].demand;
-
-  if(gold) price*=3;
-
-  money+=price;
-
-  update();
-
-  cells[i]={t:0};
-  document.getElementsByClassName("cell")[i].innerHTML="";
-  document.getElementsByClassName("cell")[i].onclick=()=>grow(i);
-}
-
-/* ===== РЫНОК ===== */
-
-function openMarket(){
-  let m=document.getElementById("market");
-  m.style.display="block";
-
-  let html="<h3>📈 Живой рынок</h3>";
-
-  for(let k in goods){
-    let price=(goods[k].base*goods[k].demand).toFixed(1);
-
-    html+=`
-      ${k} — 💰 ${price} (спрос ${goods[k].demand.toFixed(2)})
-      <button onclick="sell('${k}')">продать</button><br>
-    `;
+  if(inventory >= 10 + barn*5){
+    alert("📦 склад переполнен!");
+    return;
   }
 
-  html+=`<button onclick="closeMarket()">закрыть</button>`;
+  let c=cells[i];
 
-  m.innerHTML=html;
-}
+  let base = market[c.crop];
+  let reward = base * npc();
 
-function closeMarket(){
-  document.getElementById("market").style.display="none";
-}
+  money += reward;
+  inventory++;
 
-/* ===== ПРОДАЖА ===== */
+  c.crop=null;
 
-function sell(item){
+  let el=document.getElementsByClassName("cell")[i];
+  el.innerHTML="🌱";
+  el.onclick=()=>plant(i);
 
-  let price=goods[item].base*goods[item].demand;
-
-  if(Math.random()<0.1){
-    price*=2;
-    alert("💥 БОНУС СДЕЛКА x2!");
-  }
-
-  money+=price;
-
+  checkLevel();
+  quests();
   update();
 }
 
-/* ===== ЖИВОЙ СПРОС ===== */
+/* ======================
+   LEVEL
+====================== */
 
-function updateMarket(){
-  for(let k in goods){
-    goods[k].demand+=Math.random()*0.4-0.2;
-
-    if(goods[k].demand<0.5) goods[k].demand=0.5;
-    if(goods[k].demand>2) goods[k].demand=2;
+function checkLevel(){
+  if(money > level*150){
+    level++;
   }
 }
 
-/* ===== СЛУЧАЙНЫЕ СОБЫТИЯ ===== */
+/* ======================
+   QUESTS
+====================== */
 
-function randomEvents(){
+let questStep=0;
 
-  let r=Math.random();
+function quests(){
 
-  if(r<0.2){
-    money+=50;
-    alert("💰 Торговец дал бонус!");
+  let q=document.getElementById("quests");
+
+  if(questStep===0){
+    q.innerHTML="🎯 заработай 300$";
+
+    if(money>300){
+      money+=50;
+      questStep++;
+    }
   }
 
-  if(r>0.8){
-    alert("🌧 Дождь — рост быстрее!");
+  else if(questStep===1){
+    q.innerHTML="🎯 прокачай lvl 3";
+
+    if(level>=3){
+      money+=100;
+      questStep++;
+    }
+  }
+
+  else{
+    q.innerHTML="🏆 все квесты завершены";
   }
 }
 
-/* ===== UI ===== */
+/* ======================
+   BUILDINGS
+====================== */
+
+document.getElementById("buildings").innerHTML=`
+🏠 здания:
+<button onclick="barn++">🏠 barn (${barn})</button>
+<button onclick="saveGame()">💾 save</button>
+`;
+
+function saveGame(){
+  localStorage.setItem("farm_final",JSON.stringify({
+    money,level,energy,inventory,barn
+  }));
+
+  alert("💾 сохранено");
+}
+
+/* ======================
+   UPDATE
+====================== */
 
 function update(){
   document.getElementById("money").innerText=Math.floor(money);
   document.getElementById("lvl").innerText=level;
+  document.getElementById("energy").innerText=energy;
+  document.getElementById("inv").innerText=inventory;
 }
 
-/* ===== СМЕНА ФОНА ===== */
-
-setInterval(()=>{
-  let t=new Date().getHours();
-
-  if(t<6) document.body.style.background="#05070f";
-  else if(t<12) document.body.style.background="#0f2a1a";
-  else if(t<18) document.body.style.background="#1a2f1a";
-  else document.body.style.background="#0a0a14";
-
-},5000);
+update();
+quests();
 
 </script>
 
