@@ -2,14 +2,38 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Farm Game</title>
+<title>Farm Game PRO</title>
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
+<div id="ui">
+  💰 <span id="money">0</span> |
+  ⭐ <span id="level">1</span> |
+  📦 <span id="inv">0</span> |
+  🌦 <span id="weather">sun</span>
+</div>
+
+<div id="menu">
+  <button onclick="selectCrop('wheat')">🌾</button>
+  <button onclick="selectCrop('carrot')">🥕</button>
+  <button onclick="selectCrop('berry')">🍓</button>
+
+  <button onclick="openInventory()">📦</button>
+  <button onclick="openMarket()">🏪</button>
+  <button onclick="openQuests()">🎯</button>
+</div>
 
 <canvas id="game"></canvas>
 
 <script src="world.js"></script>
+<script src="camera.js"></script>
+<script src="economy.js"></script>
+<script src="inventory.js"></script>
+<script src="quests.js"></script>
+<script src="audio.js"></script>
+<script src="save.js"></script>
 <script src="game.js"></script>
 
 </body>
