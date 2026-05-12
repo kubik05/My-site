@@ -1,44 +1,30 @@
-const WORLD_SIZE = 40;
+const SIZE = 40;
 
-/* ======================
-   WORLD MAP
-====================== */
+let world = Array.from({length:SIZE},()=> 
+  Array.from({length:SIZE},()=>({type:"grass"}))
+);
 
-let world = [];
+let player = {x:20,y:20};
 
-for(let y = 0; y < WORLD_SIZE; y++){
-  let row = [];
-
-  for(let x = 0; x < WORLD_SIZE; x++){
-
-    row.push({
-      type: "grass",   // пока вся карта — трава
-      grow: 0,         // будущий рост растений
-      object: null     // будущие объекты (дом, дерево и т.д.)
-    });
-
-  }
-
-  world.push(row);
-}
-
-/* ======================
-   PLAYER
-====================== */
-
-let player = {
-  x: 20,          // старт по центру
-  y: 20,
-  emoji: "🧑‍🌾",
-  speed: 1
+let game = {
+  money:100,
+  level:1,
+  xp:0,
+  inventory:{}
 };
 
-/* ======================
-   FUTURE HOOKS (НЕ ТРОГАТЬ ПОКА)
-====================== */
+let planted = [];
+let selected = "wheat";
+let weather = "sun";
 
-// сюда позже добавим:
-// - растения
-// - здания
-// - животных
-// - шахту
+let npcs = [
+  {name:"Tom", wants:"wheat", price:15},
+  {name:"Anna", wants:"carrot", price:25},
+  {name:"Bob", wants:"berry", price:40}
+];
+
+let crops = {
+  wheat:{time:3,price:10,emoji:"🌾"},
+  carrot:{time:5,price:15,emoji:"🥕"},
+  berry:{time:6,price:25,emoji:"🍓"}
+};
