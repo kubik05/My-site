@@ -1,7 +1,11 @@
-function addItem(item){
-  game.inventory[item]=(game.inventory[item]||0)+1;
-}
+let inventory = {};
 
-function openInventory(){
-  show(JSON.stringify(game.inventory,null,2));
+function addItem(name){
+
+  if(!inventory[name]){
+    inventory[name]=0;
+  }
+
+  inventory[name]++;
+
 }
