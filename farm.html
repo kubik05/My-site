@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Ферма PRO+</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  color:white;
+  transition:1s;
+}
+
+#top{
+  padding:10px;
+  background:rgba(0,0,0,0.7);
+}
+
+#grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:5px;
+  padding:10px;
+}
+
+.cell{
+  background:#1c3a2a;
+  height:80px;
+  border-radius:8px;
+  text-align:center;
+  position:relative;
+  font-size:12px;
+  overflow:hidden;
+}
+
+.bar{
+  position:absolute;
+  bottom:0;
+  height:4px;
+  background:lime;
+}
+
+button{
+  margin:3px;
+  padding:8px;
+  border:none;
+  border-radius:6px;
+}
+
+#panel{
+  padding:10px;
+  background:#111;
+}
+
+#market{
+  padding:10px;
+  display:none;
+  background:#111;
+}
+</style>
+</head>
+
+<body>
+
+<div id="top">
+🌾 Уровень: <span id="lvl">1</span> |
+💰 <span id="money">100</span> |
+📦 Рынок живой
+</div>
+
+<div id="panel"></div>
+<div id="market"></div>
+<div id="grid"></div>
+
+<script>
+
+/* ===== ОСНОВА ===== */
+
+let level=1;
+let money=100;
+let cells=[];
+
+/* ===== ТОВАРЫ ===== */
+
+let goods={
+  Пшеница:{base:10,demand:1},
+  Морковь:{base:12,demand:1},
+  Лук:{base:15,demand:1},
+  Капуста:{base:18,demand:1},
+  Клубника:{base:25,demand:1.2},
+  Арбуз:{base:40,demand:1.5}
+};
+
+/* ===== СОЗДАНИЕ ПОЛЕЙ ===== */
+
+function init(){
+  let g=document.getElementById("grid");
+
+  for(let i=0;i<12;i++){
+    let d=document.createElement("div");
+    d.className="cell";
+    d.onclick=()=>grow(i);
+    g.appendChild(d);
+    cells[i]={t:0};
+  }
+
+  panel();
+  setInterval(updateMarket,5000);
+  setInterval(randomEvents,8000);
+}
+
+init();
+
+/* ===== ПАНЕЛЬ ===== */
+
+function panel(){
+  document.getElementById("panel").innerHTML=`
+    <button onclick="openMarket()">📈 Рынок</button>
+  `;
+}
+
+/* ===== РОСТ ===== */
+
+function grow(i){
+  let c=cells[i];
+  if(c.t>0) return;
+
+  c.t=5+Math.random()*5;
+
+  let el=document.getElementsByClassName("cell")[i];
+
+  let int=setInterval(()=>{
+
+    c.t--;
+
+    el.innerHTML="🌱 растёт";
+
+    if(c.t<=0){
+      clearInterval(int);
+      el.innerHTML="✔ готово";
+      el.onclick=()=>harvest(i);
+    }
+
+  },1000);
+}
+
+/* ===== СБОР ===== */
+
+function harvest(i){
+  let items=Object.keys(goods);
+  let item=items[Math.floor(Math.random()*items.length)];
+
+  let gold=Math.random()<0.05;
+
+  let price=goods[item].base*goods[item].demand;
+
+  if(gold) price*=3;
+
+  money+=price;
+
+  update();
+
+  cells[i]={t:0};
+  document.getElementsByClassName("cell")[i].innerHTML="";
+  document.getElementsByClassName("cell")[i].onclick=()=>grow(i);
+}
+
+/* ===== РЫНОК ===== */
+
+function openMarket(){
+  let m=document.getElementById("market");
+  m.style.display="block";
+
+  let html="<h3>📈 Живой рынок</h3>";
+
+  for(let k in goods){
+    let price=(goods[k].base*goods[k].demand).toFixed(1);
+
+    html+=`
+      ${k} — 💰 ${price} (спрос ${goods[k].demand.toFixed(2)})
+      <button onclick="sell('${k}')">продать</button><br>
+    `;
+  }
+
+  html+=`<button onclick="closeMarket()">закрыть</button>`;
+
+  m.innerHTML=html;
+}
+
+function closeMarket(){
+  document.getElementById("market").style.display="none";
+}
+
+/* ===== ПРОДАЖА ===== */
+
+function sell(item){
+
+  let price=goods[item].base*goods[item].demand;
+
+  if(Math.random()<0.1){
+    price*=2;
+    alert("💥 БОНУС СДЕЛКА x2!");
+  }
+
+  money+=price;
+
+  update();
+}
+
+/* ===== ЖИВОЙ СПРОС ===== */
+
+function updateMarket(){
+  for(let k in goods){
+    goods[k].demand+=Math.random()*0.4-0.2;
+
+    if(goods[k].demand<0.5) goods[k].demand=0.5;
+    if(goods[k].demand>2) goods[k].demand=2;
+  }
+}
+
+/* ===== СЛУЧАЙНЫЕ СОБЫТИЯ ===== */
+
+function randomEvents(){
+
+  let r=Math.random();
+
+  if(r<0.2){
+    money+=50;
+    alert("💰 Торговец дал бонус!");
+  }
+
+  if(r>0.8){
+    alert("🌧 Дождь — рост быстрее!");
+  }
+}
+
+/* ===== UI ===== */
+
+function update(){
+  document.getElementById("money").innerText=Math.floor(money);
+  document.getElementById("lvl").innerText=level;
+}
+
+/* ===== СМЕНА ФОНА ===== */
+
+setInterval(()=>{
+  let t=new Date().getHours();
+
+  if(t<6) document.body.style.background="#05070f";
+  else if(t<12) document.body.style.background="#0f2a1a";
+  else if(t<18) document.body.style.background="#1a2f1a";
+  else document.body.style.background="#0a0a14";
+
+},5000);
+
+</script>
+
+</body>
+</html>
