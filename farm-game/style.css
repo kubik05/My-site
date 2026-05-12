@@ -2,8 +2,34 @@ body{
   margin:0;
   overflow:hidden;
   background:#0e1a12;
+  font-family:Arial;
 }
 
 canvas{
   display:block;
+}
+
+#ui{
+  position:fixed;
+  top:0;
+  width:100%;
+  background:rgba(0,0,0,0.5);
+  color:white;
+  padding:8px;
+}
+
+#menu{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  display:flex;
+  justify-content:space-around;
+  background:rgba(0,0,0,0.6);
+  padding:10px;
+}
+
+button{
+  padding:10px;
+  border-radius:10px;
+  border:none;
 }
