@@ -10,7 +10,9 @@ let game = {
   money:100,
   level:1,
   xp:0,
-  inventory:{}
+  xpNeed:50,
+  inventory:{},
+  unlockedCrops:["wheat"]
 };
 
 let planted = [];
