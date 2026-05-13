@@ -1,198 +1,288 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mobile Web OS</title>
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Farm Game PRO</title>
 
 <style>
+
+/* ======================
+   BODY
+====================== */
+
 body{
+
   margin:0;
-  font-family:Arial;
-  background:#0b0b12;
-  color:white;
+
   overflow:hidden;
-}
 
-/* HOME SCREEN */
-#home{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
-  padding:15px;
-  transition:0.3s;
-}
+  background:#071b11;
 
-.icon{
-  background:rgba(255,255,255,0.08);
-  border-radius:18px;
-  padding:20px 10px;
-  text-align:center;
-  cursor:pointer;
-  user-select:none;
-}
+  font-family:Arial,sans-serif;
 
-/* blur effect */
-.blur{
-  filter:blur(6px);
-  transform:scale(0.98);
-}
-
-/* DOCK */
-#dock{
-  position:fixed;
-  bottom:10px;
-  left:50%;
-  transform:translateX(-50%);
-  background:rgba(255,255,255,0.08);
-  padding:10px 20px;
-  border-radius:20px;
-  display:flex;
-  gap:20px;
-}
-
-/* NOTIFICATION */
-#notif{
-  position:fixed;
-  top:10px;
-  left:50%;
-  transform:translateX(-50%);
-  background:rgba(0,0,0,0.8);
-  padding:10px 20px;
-  border-radius:12px;
-  display:none;
-  z-index:9999;
-}
-
-/* ===== FULLSCREEN FARM ===== */
-#farmFull{
-  position:fixed;
-  inset:0;
-  background:#000;
-  display:flex;
-  flex-direction:column;
-  z-index:99999;
-}
-
-#farmTop{
-  height:50px;
-  background:#111;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:0 10px;
   color:white;
+
 }
 
-#farmFull iframe{
-  flex:1;
+/* ======================
+   CANVAS
+====================== */
+
+#game{
+
+  position:fixed;
+
+  inset:0;
+
   width:100%;
-  border:none;
+
+  height:100%;
+
+  touch-action:none;
+
 }
+
+/* ======================
+   TOP UI
+====================== */
+
+#topUI{
+
+  position:fixed;
+
+  top:10px;
+
+  left:10px;
+
+  right:10px;
+
+  z-index:10;
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:10px;
+
+}
+
+/* ======================
+   INFO BAR
+====================== */
+
+#info{
+
+  background:rgba(0,0,0,0.45);
+
+  backdrop-filter:blur(8px);
+
+  padding:12px;
+
+  border-radius:14px;
+
+  font-size:24px;
+
+}
+
+/* ======================
+   XP BAR
+====================== */
+
+#xpContainer{
+
+  width:100%;
+
+  height:18px;
+
+  background:#2a2a2a;
+
+  border-radius:20px;
+
+  overflow:hidden;
+
+}
+
+#xpBar{
+
+  width:0%;
+
+  height:100%;
+
+  background:linear-gradient(
+    90deg,
+    gold,
+    orange
+  );
+
+}
+
+/* ======================
+   BOTTOM MENU
+====================== */
+
+#menu{
+
+  position:fixed;
+
+  left:0;
+
+  right:0;
+
+  bottom:20px;
+
+  display:flex;
+
+  justify-content:center;
+
+  gap:25px;
+
+  z-index:10;
+
+}
+
+/* ======================
+   BUTTONS
+====================== */
+
+.cropBtn{
+
+  width:72px;
+
+  height:72px;
+
+  border:none;
+
+  border-radius:22px;
+
+  background:rgba(255,255,255,0.95);
+
+  font-size:38px;
+
+  box-shadow:0 4px 15px rgba(0,0,0,0.35);
+
+}
+
+/* ======================
+   ACTIVE BUTTON
+====================== */
+
+.active{
+
+  outline:4px solid gold;
+
+  transform:scale(1.08);
+
+}
+
 </style>
 
 </head>
 
 <body>
 
-<!-- HOME -->
-<div id="home">
+<!-- ======================
+     UI
+====================== -->
 
-  <div class="icon" onclick="openChat()">💬<br>Чат</div>
-  <div class="icon" onclick="openNotes()">📝<br>Заметки</div>
-  <div class="icon" onclick="openGallery()">📷<br>Галерея</div>
-  <div class="icon" onclick="openGames()">🎮<br>Игры</div>
-  <div class="icon" onclick="openFarm()">🌾<br>Ферма</div>
+<div id="topUI">
+
+  <div id="info">
+    💰 <span id="money">500</span>
+    |
+    ⭐ LVL <span id="level">1</span>
+  </div>
+
+  <div id="xpContainer">
+    <div id="xpBar"></div>
+  </div>
 
 </div>
 
-<!-- DOCK -->
-<div id="dock">
-  <div onclick="openChat()">💬</div>
-  <div onclick="openFarm()">🌾</div>
-  <div onclick="openGames()">🎮</div>
+<!-- ======================
+     MENU
+====================== -->
+
+<div id="menu">
+
+  <button
+  class="cropBtn active"
+  id="btn_wheat"
+  onclick="selectCrop('wheat')">
+  🌾
+  </button>
+
+  <button
+  class="cropBtn"
+  id="btn_carrot"
+  onclick="selectCrop('carrot')">
+  🥕
+  </button>
+
+  <button
+  class="cropBtn"
+  id="btn_berry"
+  onclick="selectCrop('berry')">
+  🍓
+  </button>
+
 </div>
 
-<!-- NOTIF -->
-<div id="notif"></div>
+<!-- ======================
+     GAME
+====================== -->
+
+<canvas id="game"></canvas>
+
+<!-- ======================
+     SCRIPT
+====================== -->
+
+<script src="game.js"></script>
 
 <script>
 
-/* =====================
-   APPS (простые заглушки)
-===================== */
+/* ======================
+   BUTTON ACTIVE UI
+====================== */
 
-function openChat(){
-  notify("💬 Чат открыт");
-}
+function setActive(id){
 
-function openNotes(){
-  notify("📝 Заметки");
-}
+  document
+  .querySelectorAll(".cropBtn")
+  .forEach(b=>b.classList.remove("active"));
 
-function openGallery(){
-  notify("📷 Галерея");
-}
-
-function openGames(){
-  notify("🎮 Игры");
-}
-
-/* =====================
-   🚀 ФЕРМА (FIXED FULLSCREEN)
-===================== */
-
-function openFarm(){
-
-  closeFarm(); // на всякий случай чистим старое
-
-  document.getElementById("home").classList.add("blur");
-
-  document.body.insertAdjacentHTML("beforeend",`
-    <div id="farmFull">
-      <div id="farmTop">
-        <button onclick="closeFarm()" style="font-size:20px;">←</button>
-        <span>🌾 Ферма</span>
-      </div>
-
-      <iframe src="farm-game/index.html"></iframe>
-    </div>
-  `);
+  document
+  .getElementById(id)
+  .classList.add("active");
 
 }
 
-function closeFarm(){
+/* ======================
+   SELECT CROP
+====================== */
 
-  let f = document.getElementById("farmFull");
-  if(f) f.remove();
+function selectCrop(name){
 
-  document.getElementById("home").classList.remove("blur");
+  selected = name;
 
-}
+  if(name==="wheat"){
+    setActive("btn_wheat");
+  }
 
-/* =====================
-   NOTIFICATIONS
-===================== */
+  if(name==="carrot"){
+    setActive("btn_carrot");
+  }
 
-function notify(text){
-
-  let n=document.getElementById("notif");
-  n.innerText=text;
-  n.style.display="block";
-
-  setTimeout(()=>{
-    n.style.display="none";
-  },2000);
+  if(name==="berry"){
+    setActive("btn_berry");
+  }
 
 }
-
-/* =====================
-   SAFETY CLEANUP
-===================== */
-
-window.onload = ()=>{
-  closeFarm(); // убирает любые остатки
-};
 
 </script>
 
