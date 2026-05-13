@@ -1,196 +1,81 @@
+# index.html
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>Farm Game PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farm Game</title>
 
 <style>
-
-/* ======================
-   BODY
-====================== */
-
 body{
-
   margin:0;
-
   overflow:hidden;
-
   background:#071b11;
-
   font-family:Arial,sans-serif;
-
-  color:white;
-
 }
-
-/* ======================
-   CANVAS
-====================== */
 
 #game{
-
   position:fixed;
-
   inset:0;
-
   width:100%;
-
   height:100%;
-
-  touch-action:none;
-
 }
-
-/* ======================
-   TOP UI
-====================== */
 
 #topUI{
-
   position:fixed;
-
   top:10px;
-
   left:10px;
-
   right:10px;
-
   z-index:10;
-
-  display:flex;
-
-  flex-direction:column;
-
-  gap:10px;
-
 }
-
-/* ======================
-   INFO BAR
-====================== */
 
 #info{
-
-  background:rgba(0,0,0,0.45);
-
-  backdrop-filter:blur(8px);
-
+  background:rgba(0,0,0,0.5);
+  color:white;
   padding:12px;
-
-  border-radius:14px;
-
+  border-radius:12px;
   font-size:24px;
-
 }
 
-/* ======================
-   XP BAR
-====================== */
-
 #xpContainer{
-
-  width:100%;
-
+  margin-top:10px;
   height:18px;
-
-  background:#2a2a2a;
-
+  background:#333;
   border-radius:20px;
-
   overflow:hidden;
-
 }
 
 #xpBar{
-
   width:0%;
-
   height:100%;
-
-  background:linear-gradient(
-    90deg,
-    gold,
-    orange
-  );
-
+  background:gold;
 }
-
-/* ======================
-   BOTTOM MENU
-====================== */
 
 #menu{
-
   position:fixed;
-
-  left:0;
-
-  right:0;
-
   bottom:20px;
-
+  left:0;
+  right:0;
   display:flex;
-
   justify-content:center;
-
-  gap:25px;
-
+  gap:20px;
   z-index:10;
-
 }
-
-/* ======================
-   BUTTONS
-====================== */
 
 .cropBtn{
-
-  width:72px;
-
-  height:72px;
-
+  width:70px;
+  height:70px;
   border:none;
-
-  border-radius:22px;
-
-  background:rgba(255,255,255,0.95);
-
-  font-size:38px;
-
-  box-shadow:0 4px 15px rgba(0,0,0,0.35);
-
+  border-radius:20px;
+  font-size:35px;
 }
-
-/* ======================
-   ACTIVE BUTTON
-====================== */
-
-.active{
-
-  outline:4px solid gold;
-
-  transform:scale(1.08);
-
-}
-
 </style>
-
 </head>
-
 <body>
 
-<!-- ======================
-     UI
-====================== -->
-
 <div id="topUI">
-
   <div id="info">
     💰 <span id="money">500</span>
     |
@@ -200,91 +85,228 @@ body{
   <div id="xpContainer">
     <div id="xpBar"></div>
   </div>
-
 </div>
-
-<!-- ======================
-     MENU
-====================== -->
 
 <div id="menu">
-
-  <button
-  class="cropBtn active"
-  id="btn_wheat"
-  onclick="selectCrop('wheat')">
-  🌾
-  </button>
-
-  <button
-  class="cropBtn"
-  id="btn_carrot"
-  onclick="selectCrop('carrot')">
-  🥕
-  </button>
-
-  <button
-  class="cropBtn"
-  id="btn_berry"
-  onclick="selectCrop('berry')">
-  🍓
-  </button>
-
+  <button class="cropBtn" onclick="selectCrop('wheat')">🌾</button>
+  <button class="cropBtn" onclick="selectCrop('carrot')">🥕</button>
+  <button class="cropBtn" onclick="selectCrop('berry')">🍓</button>
 </div>
-
-<!-- ======================
-     GAME
-====================== -->
 
 <canvas id="game"></canvas>
 
-<!-- ======================
-     SCRIPT
-====================== -->
-
 <script src="game.js"></script>
-
-<script>
-
-/* ======================
-   BUTTON ACTIVE UI
-====================== */
-
-function setActive(id){
-
-  document
-  .querySelectorAll(".cropBtn")
-  .forEach(b=>b.classList.remove("active"));
-
-  document
-  .getElementById(id)
-  .classList.add("active");
-
-}
-
-/* ======================
-   SELECT CROP
-====================== */
-
-function selectCrop(name){
-
-  selected = name;
-
-  if(name==="wheat"){
-    setActive("btn_wheat");
-  }
-
-  if(name==="carrot"){
-    setActive("btn_carrot");
-  }
-
-  if(name==="berry"){
-    setActive("btn_berry");
-  }
-
-}
-
-</script>
 
 </body>
 </html>
+```
+
+---
+
+# game.js
+
+```js
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let selected = "wheat";
+
+let game = {
+  money:500,
+  level:1,
+  xp:0,
+  xpNeed:100
+};
+
+let camera = {
+  x:0,
+  y:150
+};
+
+const worldSize = 20;
+
+let planted = [];
+
+const crops = {
+  wheat:{emoji:"🌾",time:300},
+  carrot:{emoji:"🥕",time:500},
+  berry:{emoji:"🍓",time:700}
+};
+
+function selectCrop(name){
+  selected = name;
+}
+
+function iso(x,y){
+  return {
+    x:(x-y)*32 + canvas.width/2 + camera.x,
+    y:(x+y)*16 + camera.y
+  };
+}
+
+function drawTile(x,y){
+
+  const p = iso(x,y);
+
+  ctx.beginPath();
+  ctx.moveTo(p.x,p.y-16);
+  ctx.lineTo(p.x+32,p.y);
+  ctx.lineTo(p.x,p.y+16);
+  ctx.lineTo(p.x-32,p.y);
+  ctx.closePath();
+
+  ctx.fillStyle = "#6b8e23";
+  ctx.fill();
+
+  ctx.strokeStyle = "#4f6d1a";
+  ctx.stroke();
+}
+
+function drawWorld(){
+
+  for(let y=0;y<worldSize;y++){
+    for(let x=0;x<worldSize;x++){
+      drawTile(x,y);
+    }
+  }
+
+}
+
+function drawCrops(){
+
+  planted.forEach(p=>{
+
+    const pos = iso(p.x,p.y);
+
+    let progress = 1 - (p.time / crops[p.type].time);
+
+    let emoji = "🌱";
+
+    if(progress > 0.3) emoji = "🌿";
+    if(progress > 0.7) emoji = crops[p.type].emoji;
+
+    ctx.font = "28px Arial";
+    ctx.fillText(emoji,pos.x-12,pos.y);
+
+    if(!p.done){
+      p.time--;
+
+      if(p.time <= 0){
+        p.done = true;
+      }
+    }
+
+  });
+}
+
+function drawPlayer(){
+
+  const p = iso(2,2);
+
+  ctx.font = "32px Arial";
+  ctx.fillText("🧑‍🌾",p.x-16,p.y);
+
+}
+
+function updateUI(){
+
+  document.getElementById("money").innerText = game.money;
+  document.getElementById("level").innerText = game.level;
+
+  let percent = (game.xp / game.xpNeed) * 100;
+
+  document.getElementById("xpBar").style.width = percent + "%";
+
+}
+
+canvas.addEventListener("click",e=>{
+
+  const mx = e.clientX - canvas.width/2 - camera.x;
+  const my = e.clientY - camera.y;
+
+  const tx = Math.floor((my/16 + mx/32)/2);
+  const ty = Math.floor((my/16 - mx/32)/2);
+
+  if(tx < 0 || ty < 0) return;
+  if(tx >= worldSize || ty >= worldSize) return;
+
+  const crop = planted.find(p=>p.x===tx && p.y===ty);
+
+  if(crop && crop.done){
+
+    planted = planted.filter(p=>!(p.x===tx && p.y===ty));
+
+    game.money += 20;
+    game.xp += 10;
+
+    if(game.xp >= game.xpNeed){
+      game.level++;
+      game.xp = 0;
+      game.xpNeed += 50;
+    }
+
+    return;
+  }
+
+  if(!crop){
+    planted.push({
+      x:tx,
+      y:ty,
+      type:selected,
+      time:crops[selected].time,
+      done:false
+    });
+  }
+
+});
+
+let dragging = false;
+let lastX = 0;
+let lastY = 0;
+
+canvas.addEventListener("touchstart",e=>{
+
+  dragging = true;
+
+  lastX = e.touches[0].clientX;
+  lastY = e.touches[0].clientY;
+
+});
+
+canvas.addEventListener("touchmove",e=>{
+
+  if(!dragging) return;
+
+  let x = e.touches[0].clientX;
+  let y = e.touches[0].clientY;
+
+  camera.x += x - lastX;
+  camera.y += y - lastY;
+
+  lastX = x;
+  lastY = y;
+
+});
+
+canvas.addEventListener("touchend",()=>{
+  dragging = false;
+});
+
+function loop(){
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  drawWorld();
+  drawCrops();
+  drawPlayer();
+  updateUI();
+
+  requestAnimationFrame(loop);
+}
+
+loop();
+```
+     
