@@ -1,312 +1,240 @@
-# index.html
-
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Farm Game</title>
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Mobile Web OS</title>
 
 <style>
+
 body{
   margin:0;
+  font-family:Arial;
+  background:#0b0b12;
+  color:white;
   overflow:hidden;
-  background:#071b11;
-  font-family:Arial,sans-serif;
 }
 
-#game{
+/* HOME */
+
+#home{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  padding:15px;
+}
+
+.icon{
+  background:rgba(255,255,255,0.08);
+  border-radius:18px;
+  padding:20px 10px;
+  text-align:center;
+  font-size:14px;
+  cursor:pointer;
+  user-select:none;
+}
+
+/* APP */
+
+#app{
   position:fixed;
   inset:0;
-  width:100%;
-  height:100%;
+  background:#0f0f18;
+  display:none;
+  flex-direction:column;
 }
 
-#topUI{
-  position:fixed;
-  top:10px;
-  left:10px;
-  right:10px;
-  z-index:10;
+.topbar{
+  height:50px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 10px;
+  background:rgba(255,255,255,0.08);
 }
 
-#info{
-  background:rgba(0,0,0,0.5);
+.back{
+  background:none;
+  border:none;
   color:white;
-  padding:12px;
-  border-radius:12px;
-  font-size:24px;
+  font-size:20px;
 }
 
-#xpContainer{
-  margin-top:10px;
-  height:18px;
-  background:#333;
-  border-radius:20px;
+.content{
+  flex:1;
   overflow:hidden;
 }
 
-#xpBar{
-  width:0%;
+/* IFRAME */
+
+iframe{
+  width:100%;
   height:100%;
-  background:gold;
-}
-
-#menu{
-  position:fixed;
-  bottom:20px;
-  left:0;
-  right:0;
-  display:flex;
-  justify-content:center;
-  gap:20px;
-  z-index:10;
-}
-
-.cropBtn{
-  width:70px;
-  height:70px;
   border:none;
-  border-radius:20px;
-  font-size:35px;
 }
+
 </style>
+
 </head>
+
 <body>
 
-<div id="topUI">
-  <div id="info">
-    💰 <span id="money">500</span>
-    |
-    ⭐ LVL <span id="level">1</span>
+<!-- HOME -->
+
+<div id="home">
+
+  <div class="icon" onclick="openChat()">
+    💬<br>Чат
   </div>
 
-  <div id="xpContainer">
-    <div id="xpBar"></div>
+  <div class="icon" onclick="openNotes()">
+    📝<br>Заметки
   </div>
+
+  <div class="icon" onclick="openGallery()">
+    📷<br>Галерея
+  </div>
+
+  <div class="icon" onclick="openGames()">
+    🎮<br>Игры
+  </div>
+
+  <div class="icon" onclick="openFarm()">
+    🌾<br>Ферма
+  </div>
+
 </div>
 
-<div id="menu">
-  <button class="cropBtn" onclick="selectCrop('wheat')">🌾</button>
-  <button class="cropBtn" onclick="selectCrop('carrot')">🥕</button>
-  <button class="cropBtn" onclick="selectCrop('berry')">🍓</button>
+<!-- APP -->
+
+<div id="app">
+
+  <div class="topbar">
+
+    <button class="back" onclick="closeApp()">
+      ←
+    </button>
+
+    <span id="title">
+      App
+    </span>
+
+    <div></div>
+
+  </div>
+
+  <div class="content" id="content"></div>
+
 </div>
 
-<canvas id="game"></canvas>
+<script>
 
-<script src="game.js"></script>
+/* OPEN APP */
+
+function openApp(title,html){
+
+  document.getElementById("home").style.display="none";
+
+  document.getElementById("app").style.display="flex";
+
+  document.getElementById("title").innerText=title;
+
+  document.getElementById("content").innerHTML=html;
+
+}
+
+/* CLOSE */
+
+function closeApp(){
+
+  document.getElementById("home").style.display="grid";
+
+  document.getElementById("app").style.display="none";
+
+}
+
+/* APPS */
+
+function openChat(){
+
+  openApp("💬 Чат",`
+
+    <div style="
+      padding:20px;
+      color:white;
+    ">
+      Чат скоро будет
+    </div>
+
+  `);
+
+}
+
+function openNotes(){
+
+  openApp("📝 Заметки",`
+
+    <textarea style="
+      width:100%;
+      height:100%;
+      background:#111;
+      color:white;
+      border:none;
+      padding:20px;
+      font-size:18px;
+    "></textarea>
+
+  `);
+
+}
+
+function openGallery(){
+
+  openApp("📷 Галерея",`
+
+    <div style="
+      padding:20px;
+      color:white;
+    ">
+      Галерея скоро будет
+    </div>
+
+  `);
+
+}
+
+function openGames(){
+
+  openApp("🎮 Игры",`
+
+    <div style="
+      padding:20px;
+      color:white;
+    ">
+      Игры скоро будут
+    </div>
+
+  `);
+
+}
+
+/* FARM */
+
+function openFarm(){
+
+  openApp("🌾 Ферма",`
+
+    <iframe src="farm-game/index.html"></iframe>
+
+  `);
+
+}
+
+</script>
 
 </body>
 </html>
-```
-
----
-
-# game.js
-
-```js
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let selected = "wheat";
-
-let game = {
-  money:500,
-  level:1,
-  xp:0,
-  xpNeed:100
-};
-
-let camera = {
-  x:0,
-  y:150
-};
-
-const worldSize = 20;
-
-let planted = [];
-
-const crops = {
-  wheat:{emoji:"🌾",time:300},
-  carrot:{emoji:"🥕",time:500},
-  berry:{emoji:"🍓",time:700}
-};
-
-function selectCrop(name){
-  selected = name;
-}
-
-function iso(x,y){
-  return {
-    x:(x-y)*32 + canvas.width/2 + camera.x,
-    y:(x+y)*16 + camera.y
-  };
-}
-
-function drawTile(x,y){
-
-  const p = iso(x,y);
-
-  ctx.beginPath();
-  ctx.moveTo(p.x,p.y-16);
-  ctx.lineTo(p.x+32,p.y);
-  ctx.lineTo(p.x,p.y+16);
-  ctx.lineTo(p.x-32,p.y);
-  ctx.closePath();
-
-  ctx.fillStyle = "#6b8e23";
-  ctx.fill();
-
-  ctx.strokeStyle = "#4f6d1a";
-  ctx.stroke();
-}
-
-function drawWorld(){
-
-  for(let y=0;y<worldSize;y++){
-    for(let x=0;x<worldSize;x++){
-      drawTile(x,y);
-    }
-  }
-
-}
-
-function drawCrops(){
-
-  planted.forEach(p=>{
-
-    const pos = iso(p.x,p.y);
-
-    let progress = 1 - (p.time / crops[p.type].time);
-
-    let emoji = "🌱";
-
-    if(progress > 0.3) emoji = "🌿";
-    if(progress > 0.7) emoji = crops[p.type].emoji;
-
-    ctx.font = "28px Arial";
-    ctx.fillText(emoji,pos.x-12,pos.y);
-
-    if(!p.done){
-      p.time--;
-
-      if(p.time <= 0){
-        p.done = true;
-      }
-    }
-
-  });
-}
-
-function drawPlayer(){
-
-  const p = iso(2,2);
-
-  ctx.font = "32px Arial";
-  ctx.fillText("🧑‍🌾",p.x-16,p.y);
-
-}
-
-function updateUI(){
-
-  document.getElementById("money").innerText = game.money;
-  document.getElementById("level").innerText = game.level;
-
-  let percent = (game.xp / game.xpNeed) * 100;
-
-  document.getElementById("xpBar").style.width = percent + "%";
-
-}
-
-canvas.addEventListener("click",e=>{
-
-  const mx = e.clientX - canvas.width/2 - camera.x;
-  const my = e.clientY - camera.y;
-
-  const tx = Math.floor((my/16 + mx/32)/2);
-  const ty = Math.floor((my/16 - mx/32)/2);
-
-  if(tx < 0 || ty < 0) return;
-  if(tx >= worldSize || ty >= worldSize) return;
-
-  const crop = planted.find(p=>p.x===tx && p.y===ty);
-
-  if(crop && crop.done){
-
-    planted = planted.filter(p=>!(p.x===tx && p.y===ty));
-
-    game.money += 20;
-    game.xp += 10;
-
-    if(game.xp >= game.xpNeed){
-      game.level++;
-      game.xp = 0;
-      game.xpNeed += 50;
-    }
-
-    return;
-  }
-
-  if(!crop){
-    planted.push({
-      x:tx,
-      y:ty,
-      type:selected,
-      time:crops[selected].time,
-      done:false
-    });
-  }
-
-});
-
-let dragging = false;
-let lastX = 0;
-let lastY = 0;
-
-canvas.addEventListener("touchstart",e=>{
-
-  dragging = true;
-
-  lastX = e.touches[0].clientX;
-  lastY = e.touches[0].clientY;
-
-});
-
-canvas.addEventListener("touchmove",e=>{
-
-  if(!dragging) return;
-
-  let x = e.touches[0].clientX;
-  let y = e.touches[0].clientY;
-
-  camera.x += x - lastX;
-  camera.y += y - lastY;
-
-  lastX = x;
-  lastY = y;
-
-});
-
-canvas.addEventListener("touchend",()=>{
-  dragging = false;
-});
-
-function loop(){
-
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  drawWorld();
-  drawCrops();
-  drawPlayer();
-  updateUI();
-
-  requestAnimationFrame(loop);
-}
-
-loop();
-```
-     
