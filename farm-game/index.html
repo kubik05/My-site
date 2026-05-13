@@ -1,57 +1,125 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Farm Game PRO</title>
 
-<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Farm Game</title>
+
+<style>
+
+body{
+  margin:0;
+  overflow:hidden;
+  background:#071b11;
+  font-family:Arial;
+}
+
+#game{
+  position:fixed;
+  inset:0;
+}
+
+#topUI{
+  position:fixed;
+  top:10px;
+  left:10px;
+  right:10px;
+  z-index:10;
+}
+
+#info{
+  background:rgba(0,0,0,0.5);
+  color:white;
+  padding:12px;
+  border-radius:12px;
+  font-size:22px;
+}
+
+#xpContainer{
+  margin-top:10px;
+  height:16px;
+  background:#333;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+#xpBar{
+  width:0%;
+  height:100%;
+  background:gold;
+}
+
+#menu{
+  position:fixed;
+  bottom:20px;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  z-index:10;
+}
+
+.cropBtn{
+  width:70px;
+  height:70px;
+  border:none;
+  border-radius:20px;
+  font-size:34px;
+}
+
+</style>
+
 </head>
 
 <body>
 
-<!-- UI -->
-<div id="ui">
-  💰 <span id="money">500</span> |
-  ⭐ LVL <span id="level">1</span>
+<div id="topUI">
+
+  <div id="info">
+
+    💰 <span id="money">500</span>
+
+    |
+
+    ⭐ LVL <span id="level">1</span>
+
+  </div>
+
+  <div id="xpContainer">
+
+    <div id="xpBar"></div>
+
+  </div>
+
 </div>
 
-<!-- XP BAR -->
-<div id="xpContainer">
-  <div id="xpBar"></div>
-</div>
-
-<!-- MENU -->
 <div id="menu">
-  <button onclick="selectCrop('wheat')">🌾</button>
-  <button onclick="selectCrop('carrot')">🥕</button>
-  <button onclick="selectCrop('berry')">🍓</button>
+
+  <button class="cropBtn"
+  onclick="selectCrop('wheat')">
+  🌾
+  </button>
+
+  <button class="cropBtn"
+  onclick="selectCrop('carrot')">
+  🥕
+  </button>
+
+  <button class="cropBtn"
+  onclick="selectCrop('berry')">
+  🍓
+  </button>
+
 </div>
 
-<!-- GAME -->
 <canvas id="game"></canvas>
 
-<!-- SCRIPTS -->
-<script src="world.js"></script>
-<script src="camera.js"></script>
-<script src="economy.js"></script>
-<script src="inventory.js"></script>
-<script src="quests.js"></script>
-<script src="audio.js"></script>
-<script src="save.js"></script>
 <script src="game.js"></script>
-
-<script>
-
-/* ======================
-   SELECT CROP
-====================== */
-
-function selectCrop(name){
-  selected = name;
-}
-
-</script>
 
 </body>
 </html>
